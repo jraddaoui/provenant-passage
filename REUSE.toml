@@ -1,0 +1,72 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+version = 1
+
+[[annotations]]
+path = "DCO"
+SPDX-FileCopyrightText = "2004, 2006 The Linux Foundation and its contributors"
+SPDX-License-Identifier = "LicenseRef-DCO-1.1"
+
+[[annotations]]
+path = ["go.mod", "go.sum", ".bine.toml", "docs/*.json", "internal/api/gen/**", "internal/persistence/ent/db/**", "internal/enums/*_enum.go", "internal/db/migrations/atlas.sum"]
+SPDX-FileCopyrightText = "2026 Artefactual Systems Limited"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["hack/make/enums.tmpl", ".golangci.yml", "internal/api/design/uuid.go", "internal/event/**"]
+SPDX-FileCopyrightText = "Artefactual Systems Inc. and Enduro contributors"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["ui/**", "internal/persistence/fake/**", "internal/version/VERSION.txt"]
+SPDX-FileCopyrightText = "2026 Artefactual Systems Limited"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["hack/tilt/**"]
+SPDX-FileCopyrightText = "Tilt contributors"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["ui/package.json", "ui/package-lock.json", "ui/vite.config.ts", "ui/vitest.config.ts", "ui/vitest.setup.ts", "ui/eslint.config.mjs", "ui/.prettierrc.json", "ui/.prettierignore", "ui/tsconfig.json", "ui/tsconfig.app.json", "ui/tsconfig.vitest.json", "ui/tsconfig.node.json", "ui/src/components/ThemeToggle.vue", "ui/src/components/ThemeToggle.spec.ts", "ui/src/components/Pager.vue", "ui/src/components/Pager.spec.ts", "ui/src/components/ResultCounter.vue", "ui/src/components/ResultCounter.spec.ts", "ui/src/components/UUID.vue", "ui/src/components/UUID.spec.ts", "ui/src/components/Breadcrumb.vue", "ui/src/components/Sidebar.vue", "ui/src/composables/useTheme.ts", "ui/src/composables/useTheme.spec.ts", "ui/src/stores/layout.ts", "ui/src/styles/bootstrap-base.scss", "ui/src/styles/bootstrap.scss", "ui/src/styles/main.scss", "ui/src/test/theme.ts"]
+SPDX-FileCopyrightText = "Artefactual Systems Inc. and Enduro contributors"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["hack/kube/base/mysql.yaml", "hack/kube/base/redis.yaml", "hack/kube/base/seaweedfs.yaml", "hack/kube/base/temporal.yaml"]
+SPDX-FileCopyrightText = ["Artefactual Systems Inc. and Enduro contributors", "2026 Artefactual Systems Limited"]
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "NOTICE"
+SPDX-FileCopyrightText = "2026 Artefactual Systems Limited"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["ui/licenses/icons/clarity.txt", "ui/licenses/icons/clarity-NOTICE.txt"]
+precedence = "override"
+SPDX-FileCopyrightText = "VMware"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = "ui/licenses/icons/bootstrap-icons.txt"
+precedence = "override"
+SPDX-FileCopyrightText = "The Bootstrap Authors"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = "ui/licenses/icons/akar-icons.txt"
+precedence = "override"
+SPDX-FileCopyrightText = "Arturo Wibawa"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = "ui/licenses/CC-BY-4.0.txt"
+precedence = "override"
+SPDX-FileCopyrightText = "Creative Commons"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = ["ui/src/main.ts", "ui/src/router.ts", "ui/src/client.ts", "ui/src/monitor.ts", "ui/src/components/Header.vue", "ui/src/components/AIPUploadLocal.vue", "ui/src/stores/aips.ts"]
+SPDX-FileCopyrightText = "Artefactual Systems Inc. and Enduro contributors"
+SPDX-License-Identifier = "Apache-2.0"

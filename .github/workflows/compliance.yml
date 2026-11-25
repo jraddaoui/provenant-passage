@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+name: Licensing and human sign-off
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  reuse:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: |
+          python3 -m venv /tmp/reuse
+          /tmp/reuse/bin/pip install reuse==6.2.0
+          python3 hack/reuse-check.py /tmp/reuse/bin/reuse
+  dco:
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Require the human author's sign-off
+        env:
+          DCO_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          DCO_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: python3 hack/dco-check.py

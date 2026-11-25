@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+.git
+.cache
+bin
+ui/node_modules
+ui/dist
+docs/evidence/local
+provenant.local.toml
+.tilt.env
+coverage
+covreport

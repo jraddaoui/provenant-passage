@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+# Local development placeholders only. Put real credentials in environment
+# variables or ignored provenant.local.toml, never in this example.
+scratchDir = "/tmp/provenant-passage"
+importerBinary = "/usr/local/bin/provenant-import"
+healthListen = "0.0.0.0:9001"
+
+[api]
+listen = "0.0.0.0:9000"
+[database]
+dsn = "provenant:provenant-dev@tcp(mysql.provenant:3306)/provenant"
+[temporal]
+address = "temporal-frontend.provenant:7233"
+namespace = "provenant"
+workflowQueue = "provenant-import"
+activityQueue = "provenant-import-sessions"
+sessionCapacity = 1
+sessionCreationTimeout = "10m"
+sessionExecutionTimeout = "6h"
+activityTimeout = "1h"
+heartbeatTimeout = "20s"
+[source]
+url = "s3://am-aips?region=us-east-1&endpoint=http://seaweedfs.provenant:8333&use_path_style=true&disable_https=true&awssdk=v2"
+[output]
+url = "s3://ocfl-objects?region=us-east-1&endpoint=http://seaweedfs.provenant:8333&use_path_style=true&disable_https=true&awssdk=v2"
+[event]
+redisAddress = "redis://redis.provenant:6379"
+redisChannel = "provenant-aips-events"
+[log]
+level = "info"
+format = "json"

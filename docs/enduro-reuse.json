@@ -1,0 +1,328 @@
+[
+  {
+    "source": "hack/make/enums.tmpl",
+    "sha256": "68db54d3c676b0c8a850298473c26822bc88cb9eaf3b58b88789d418fb89a9d8",
+    "destination": "hack/make/enums.tmpl",
+    "changes": "Unchanged."
+  },
+  {
+    "source": ".golangci.yml",
+    "sha256": "d21d4a88329dbf4abeb8522cd6c0f188f7e9b50b1ba92be7429ec700d8d86384",
+    "destination": ".golangci.yml",
+    "changes": "Project module/schema/UI paths adapted; upstream rules retained."
+  },
+  {
+    "source": "internal/api/design/uuid.go",
+    "sha256": "734ce0a2a3651f2ec9a0b04a85a8e51a0a993a1e822eec5d4ed2ed27cebe467b",
+    "destination": "internal/api/design/uuid.go",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "internal/event/event.go",
+    "sha256": "fcd0601c72cc8ec39e464f63f95a9bf4dfe48ed6cb6edd20f3d48647530469a5",
+    "destination": "internal/event/event.go",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "internal/event/redis.go",
+    "sha256": "9d17046a3091fc65b2c4090e41eecf2d7e83b7ff16caf1063ec4a403b3d9fd36",
+    "destination": "internal/event/redis.go",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "internal/event/config.go",
+    "sha256": "bcd1ecec4f4b7388a60b6ece55b7b8483e45b35d044f18dee5d6f2be842900dd",
+    "destination": "internal/event/config.go",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "internal/event/redis_test.go",
+    "sha256": "4349def230cc5a4c6e820ac74891d0dc131f7604c1185f2fec90e0acdd708852",
+    "destination": "internal/event/redis_test.go",
+    "changes": "Adapted to project naming, configuration or formatting; source hash retained."
+  },
+  {
+    "source": "hack/kube/base/mysql.yaml",
+    "sha256": "6f36689aa976b3de2e0f3ad44b472e92cd7a66886368887973da829b7ee26a03",
+    "destination": "hack/kube/base/mysql.yaml",
+    "changes": "Adapted to project naming, configuration or formatting; source hash retained."
+  },
+  {
+    "source": "hack/kube/base/redis.yaml",
+    "sha256": "1ae5afa180e19df12e8cc47e82daf97440d7f2cd071a004b912d1636b1496982",
+    "destination": "hack/kube/base/redis.yaml",
+    "changes": "Adapted to project naming, configuration or formatting; source hash retained."
+  },
+  {
+    "source": "hack/kube/base/temporal.yaml",
+    "sha256": "b8c0166bd9b375ccaf3d344cb42aa012bf3fe4bcce8d4ea2979999d051f6a8bb",
+    "destination": "hack/kube/base/temporal.yaml",
+    "changes": "Adapted to project naming, configuration or formatting; source hash retained."
+  },
+  {
+    "source": "hack/kube/components/seaweedfs/seaweedfs.yaml",
+    "sha256": "11a99925b1311a29c68818372962398457a6222fee2a49e00634190287b29a89",
+    "destination": "hack/kube/base/seaweedfs.yaml",
+    "changes": "Adapted to project naming, configuration or formatting; source hash retained."
+  },
+  {
+    "source_project": "tilt-extensions",
+    "source": "uibutton/Tiltfile",
+    "sha256": "26b29f0af166fe79e6314c0481611c1ec15d714ea7510cb27f543eb2ec93a8e4",
+    "destination": "hack/tilt/uibutton/Tiltfile",
+    "changes": "Unchanged; loaded locally to avoid automatic Git cloning."
+  },
+  {
+    "source_project": "tilt-extensions",
+    "source": "dotenv/Tiltfile",
+    "sha256": "083ca7eeb295d6af471078d0c4f4e36a2f9cc229362c961cb4fc5d5bb824d7ef",
+    "destination": "hack/tilt/dotenv/Tiltfile",
+    "changes": "Unchanged; loaded locally to avoid automatic Git cloning."
+  },
+  {
+    "source": "dashboard/package.json",
+    "sha256": "f1d06e5d758f04547b46e0954234d74c84b3c4dac1d6801750057bc8d8085c09",
+    "destination": "ui/package.json",
+    "changes": "Renamed ui; removed authentication and unused domain dependencies; corrected Prettier --write command."
+  },
+  {
+    "source": "dashboard/package-lock.json",
+    "sha256": "570b5b7e2d3925f6f87a7dd84600c96fe9c72b70e9b565a890e482aeb238da78",
+    "destination": "ui/package-lock.json",
+    "changes": "Lockfile regenerated after removing unused/auth dependencies at existing package versions."
+  },
+  {
+    "source": "dashboard/vite.config.ts",
+    "sha256": "194d33dd7f64106c6d4381f78a07d1a7b4de26ba2439b92e9453255a006ffc46",
+    "destination": "ui/vite.config.ts",
+    "changes": "Project API environment, all-route streaming proxy, dev port and auth-free CSP."
+  },
+  {
+    "source": "dashboard/vitest.config.ts",
+    "sha256": "7f8bbd6595b97d0e363143875c6df85fffeeac3e5fda8aedf2acaeb8f7df9d42",
+    "destination": "ui/vitest.config.ts",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/vitest.setup.ts",
+    "sha256": "5b8e44ca4821eae90056d4cae5d5791b8687a7824f96ca6f34f929f00b0d0c25",
+    "destination": "ui/vitest.setup.ts",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/eslint.config.mjs",
+    "sha256": "8dfa0e795ab942e4ee55928b6eceb692a77ea5a8764adba1d3eb2aefd37bfa6c",
+    "destination": "ui/eslint.config.mjs",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/.prettierrc.json",
+    "sha256": "576eb66ab3c4ce78a565956ac6fd07ac7a8c23738c4178d4ea273845d9633f8a",
+    "destination": "ui/.prettierrc.json",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/.prettierignore",
+    "sha256": "68bdcdd192085da93c42b8638a9daf28e68e1e4ee2bdf6ecfc48adb7e402c083",
+    "destination": "ui/.prettierignore",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/tsconfig.json",
+    "sha256": "9c4d36d79809ab9835a9e674b60dd208f3c15958eb9f2dea1afb218f6d0e483b",
+    "destination": "ui/tsconfig.json",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/tsconfig.app.json",
+    "sha256": "88a3a7d96d4666c9c2e6475d8fbd740bb4b9cb9a87be43e0fa5b9544b539c3bc",
+    "destination": "ui/tsconfig.app.json",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/tsconfig.vitest.json",
+    "sha256": "ef816bc5b0273e108316f453363fb84f5e2ddd021e8132baf7166793d26a15b8",
+    "destination": "ui/tsconfig.vitest.json",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/tsconfig.node.json",
+    "sha256": "fb26bffc2bd204c4abcc945711cbdaa277e46d66dba35667c5f9c2cfe3695553",
+    "destination": "ui/tsconfig.node.json",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/src/components/ThemeToggle.vue",
+    "sha256": "cba31fb827c1798b2e5865b40e10719e71e18995446f19da5d91bf92f4b1096f",
+    "destination": "ui/src/components/ThemeToggle.vue",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/src/components/ThemeToggle.spec.ts",
+    "sha256": "d893ec33159af9d8c390e83086635a563549b6dde5fb7ab1c3c4bdcff2cf11f2",
+    "destination": "ui/src/components/ThemeToggle.spec.ts",
+    "changes": "Adapted to project naming, configuration or formatting; source hash retained."
+  },
+  {
+    "source": "dashboard/src/components/Pager.vue",
+    "sha256": "62a1ca5bc57c062eed992d761e573200b0731ae641582b41ccb97625cf2f1465",
+    "destination": "ui/src/components/Pager.vue",
+    "changes": "ASCII ellipsis."
+  },
+  {
+    "source": "dashboard/src/components/Pager.spec.ts",
+    "sha256": "ac394ee543ffe5a9c472b833766254ee4a9ff15b8079eab9a18731bea457e9bb",
+    "destination": "ui/src/components/Pager.spec.ts",
+    "changes": "ASCII ellipsis expectation."
+  },
+  {
+    "source": "dashboard/src/components/ResultCounter.vue",
+    "sha256": "55913ab9ac48a20ff2dfcc212171e6e9ece51a9b53086ceae0e9c9604fcd312e",
+    "destination": "ui/src/components/ResultCounter.vue",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/src/components/ResultCounter.spec.ts",
+    "sha256": "1b85d4fe8af004ba23acdf23602327bcdb7eeb88132d417100b3f9e6d7b66cfb",
+    "destination": "ui/src/components/ResultCounter.spec.ts",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/src/components/UUID.vue",
+    "sha256": "abf394308210d24b09895f9891b60d28442ebb19715e30d5d2030787fd6c6834",
+    "destination": "ui/src/components/UUID.vue",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/src/components/UUID.spec.ts",
+    "sha256": "bfd494f806840c77baf3d6eec39a063a301476dc60052a34856ff880f8815cd6",
+    "destination": "ui/src/components/UUID.spec.ts",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/src/components/Breadcrumb.vue",
+    "sha256": "1b2f52c12b0bb14d889ae15a368ed9d4bf5a9543207e27bf0de60e132e0ca11e",
+    "destination": "ui/src/components/Breadcrumb.vue",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/src/components/Sidebar.vue",
+    "sha256": "3ab1584aac8a94f213235bb8564a5a5870c510be75c78c6634da5292b96a166c",
+    "destination": "ui/src/components/Sidebar.vue",
+    "changes": "Three project routes, no auth; retained responsive/collapse behavior; dispose offcanvas."
+  },
+  {
+    "source": "dashboard/src/composables/useTheme.ts",
+    "sha256": "cbffd5a7e3c8a839aa315a3bad746602e7282c1b0295650ee4e693af7796730a",
+    "destination": "ui/src/composables/useTheme.ts",
+    "changes": "Adapted to project naming, configuration or formatting; source hash retained."
+  },
+  {
+    "source": "dashboard/src/composables/useTheme.spec.ts",
+    "sha256": "4b2067aaff0ce6b1abb305bed74b6cdf036fe5a619c3203df85b7600db856390",
+    "destination": "ui/src/composables/useTheme.spec.ts",
+    "changes": "Adapted to project naming, configuration or formatting; source hash retained."
+  },
+  {
+    "source": "dashboard/src/stores/layout.ts",
+    "sha256": "1fac0d70eaf3747605e3bb9eb06b80b5f94d6129c2088c715cb828e76059d68c",
+    "destination": "ui/src/stores/layout.ts",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/src/styles/bootstrap-base.scss",
+    "sha256": "406b2061acb01b32143c657d706499c12cf8a190b73435c59864bf26cf61e7cf",
+    "destination": "ui/src/styles/bootstrap-base.scss",
+    "changes": "Original teal theme, heading weight, radii and sidebar width."
+  },
+  {
+    "source": "dashboard/src/styles/bootstrap.scss",
+    "sha256": "578182788b608c9e31466abd5473e87aaea0886bb3bbcbe40b174e5ed28d3998",
+    "destination": "ui/src/styles/bootstrap.scss",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/src/styles/main.scss",
+    "sha256": "f1fea8be0ec978db5f67e2de0e122876e7cf576ce932801d636de580bf42fd8d",
+    "destination": "ui/src/styles/main.scss",
+    "changes": "Added dark outline-button contrast."
+  },
+  {
+    "source": "dashboard/src/test/theme.ts",
+    "sha256": "d25358fc393549c44c5ff939668fb2a3e5d8f3ac800eb247dcb9af9e2b96220c",
+    "destination": "ui/src/test/theme.ts",
+    "changes": "Unchanged."
+  },
+  {
+    "source": "dashboard/src/main.ts",
+    "sha256": "4ea8a7d1a2588b9067c9d8641ad4c5431e906ab922525f503ac4351fa82ba7c2",
+    "destination": "ui/src/main.ts",
+    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md."
+  },
+  {
+    "source": "dashboard/src/router.ts",
+    "sha256": "0e3108e3b6c1bc9774ebd197f5e1d3f7931b9ba222f0d20c5c9c67f3aecde738",
+    "destination": "ui/src/router.ts",
+    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md."
+  },
+  {
+    "source": "dashboard/src/client.ts",
+    "sha256": "91d5c4b18589eb94554afd9d7b5e0d2e38d337aca50445f3d5725596de30c7d3",
+    "destination": "ui/src/client.ts",
+    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md."
+  },
+  {
+    "source": "dashboard/src/monitor.ts",
+    "sha256": "a5ba85e2ce411626d53199d551ada6ef631c66eeee6d85ec486a9ce287b46f3c",
+    "destination": "ui/src/monitor.ts",
+    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md."
+  },
+  {
+    "source": "dashboard/src/components/Header.vue",
+    "sha256": "31c31659bf39b2a4d06f4af167a447c041e8eec24a27d9484e18e4266b777304",
+    "destination": "ui/src/components/Header.vue",
+    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md."
+  },
+  {
+    "source": "dashboard/src/components/SIPUploadLocal.vue",
+    "sha256": "b897ba3339938fa950e58561a50cfed40f403ea8e19105c6381361475bfe070c",
+    "destination": "ui/src/components/AIPUploadLocal.vue",
+    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md."
+  },
+  {
+    "source": "dashboard/src/stores/sip.ts",
+    "sha256": "f8e22992f6a75d743eb74aed5c9f89fe3ffda67710185eedbb728978dc8a3986",
+    "destination": "ui/src/stores/aips.ts",
+    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md."
+  },
+  {
+    "source": "dashboard/Dockerfile",
+    "sha256": "754cd3a22072c7a1a56cd45059b7c375b6bbcd21501b013321288d05eadd6728",
+    "destination": "ui/Dockerfile",
+    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md."
+  },
+  {
+    "source": "dashboard/hack/inject-vite-envs.sh",
+    "sha256": "02d92931d7a2512a8e077305a2ed0a9ab0dd420acfcb4f3899897e30a93e88c9",
+    "destination": "ui/hack/inject-vite-envs.sh",
+    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md."
+  },
+  {
+    "source": "Dockerfile",
+    "sha256": "6e4d1b4666d4db624afcc1f925f314c77f043be0be7ce0e9614b22b463798c62",
+    "destination": "Dockerfile",
+    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md."
+  },
+  {
+    "source": "hack/build_dist.sh",
+    "sha256": "517a41f9a2b609414b18c1747d904fd68d56a807ec076ff6867c0ade4e60a6c3",
+    "destination": "hack/build_dist.sh",
+    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md."
+  },
+  {
+    "source": "internal/version/version.go",
+    "sha256": "39d7e6b99a23e93efbc4edadc90d0c63e6c151a5d1fd4fe6664de8136831881d",
+    "destination": "internal/version/version.go",
+    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md."
+  }
+]

@@ -1,0 +1,59 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+name: Build and test
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    env:
+      GOFLAGS: -buildvcs=false
+      GOTOOLCHAIN: go1.27.4
+      BUILDX_GIT_INFO: "false"
+      BUILDX_GIT_LABELS: "false"
+      PASSAGE_TEST_MYSQL_DSN: root:provenant-test@tcp(127.0.0.1:3306)/
+      PASSAGE_TEST_REDIS_URL: redis://127.0.0.1:6379
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: provenant-test
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -provenant-test"
+          --health-interval=5s --health-timeout=5s --health-retries=30
+      redis:
+        image: redis:8.4.2
+        ports: ["6379:6379"]
+        options: --health-cmd="redis-cli ping" --health-interval=5s --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27.4"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "26"
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+      - name: Provision the independently maintained importer
+        env:
+          IMPORTER_ARCHIVE_URL: ${{ vars.IMPORTER_ARCHIVE_URL }}
+          IMPORTER_ARCHIVE_SHA256: ${{ vars.IMPORTER_ARCHIVE_SHA256 }}
+        run: python3 hack/provision-importer.py .cache/provenant-import
+      - run: make tools build lint test-race vet workflowcheck
+      - name: Regenerate and compare file hashes without Git
+        run: python3 hack/check-generated.py
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+        working-directory: ui
+      - run: npm run check
+        working-directory: ui
+      - name: Build both runtime images locally
+        run: |
+          bash hack/build_docker.sh provenant-server
+          bash hack/build_docker.sh provenant-ui
+      - name: Render deployment
+        run: kubectl kustomize hack/kube/base > /tmp/provenant.yaml

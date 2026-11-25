@@ -1,0 +1,20 @@
+[
+  {
+    "source": "internal/aip/aiptest/aiptest.go",
+    "sha256": "287f02480b346fdcab9c68b3b07daf6aa67208ad5948d0fe0791eb00f514be5f",
+    "destination": "internal/testfixture/fixture.go",
+    "changes": "Copied fixture; package/importer references and local file modes adapted for Passage."
+  },
+  {
+    "source": "internal/aip/aiptest/testdata/synthetic-md5.7z",
+    "sha256": "75a44de1751da7bf688e4dd8a172a8599c4692376d5d325cdaacd43dd0ee4860",
+    "destination": "internal/testfixture/testdata/synthetic-md5.7z",
+    "changes": "Copied fixture; package/importer references and local file modes adapted for Passage."
+  },
+  {
+    "source": "internal/aip/aiptest/testdata/README.md",
+    "sha256": "6b75aa2b8124650cfd2ae9fedb620370782ffecad257ef119cf0ac9f60e4f312",
+    "destination": "internal/testfixture/testdata/README.md",
+    "changes": "Copied fixture; package/importer references and local file modes adapted for Passage."
+  }
+]

@@ -1,0 +1,23 @@
+Provenant Passage
+Copyright 2026 Artefactual Systems Limited
+
+Includes code and UI components adapted from Enduro.
+Copyright Artefactual Systems Inc. and Enduro contributors.
+Licensed under Apache-2.0. Source hashes and adaptations are recorded in
+docs/enduro-reuse.json and docs/enduro-reuse.md.
+
+Uses provenant-import as an independently built external executable.
+Copyright 2026 Justin Simpson / Artefactual Systems Limited.
+Apache-2.0 code and CC-BY-4.0 documentation. Original notices and source
+fingerprints are included with the server image.
+
+Includes Tilt dotenv/uibutton extensions, Apache-2.0, Tilt contributors.
+UI icons: Clarity (VMware), Bootstrap Icons (The Bootstrap Authors),
+and Akar Icons (Arturo Wibawa), each MIT-licensed. Their original license
+notices accompany the UI distribution. The Passage logo is original SVG.
+
+Runtime dependency license notices accompany each container. UI notices
+include build dependencies as well as dependencies present in the bundle.
+
+Prepared with OpenAI Codex assistance. Human review and DCO sign-off remain
+the responsibility of the human developer; no human sign-off is claimed.

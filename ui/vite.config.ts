@@ -1,0 +1,79 @@
+import { URL, fileURLToPath } from "node:url";
+
+import vue from "@vitejs/plugin-vue";
+import Icons from "unplugin-icons/vite";
+import { defineConfig, loadEnv } from "vite";
+import vueDevTools from "vite-plugin-vue-devtools";
+import VueRouter from "vue-router/vite";
+
+// Load environment variables from .env* files and the current process.
+// The variables from the current process take precedence.
+const fileEnv = loadEnv(process.env.NODE_ENV || "", process.cwd(), "");
+const env = { ...fileEnv, ...process.env };
+
+// Content Security Policy (CSP). Only used in development mode.
+const csp: Record<string, string[]> = {
+  "default-src": ["'self'"],
+  "script-src-attr": ["'none'"],
+  "style-src-elem": ["'self'", "'unsafe-inline'"],
+  "img-src": ["'self'", "data:"],
+  "connect-src": ["'self'", "ws:", "wss:"],
+  "frame-src": ["'self'"],
+  "object-src": ["'none'"],
+  "base-uri": ["'self'"],
+  "form-action": ["'self'"],
+};
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    VueRouter({
+      dts: "src/route-map.d.ts",
+      routesFolder: "src/pages",
+      watch: false,
+    }),
+    vue({}),
+    vueDevTools(),
+    Icons({ compiler: "vue3" }),
+  ],
+  server: {
+    host: "127.0.0.1",
+    port: 5173,
+    strictPort: true,
+    headers: {
+      "Content-Security-Policy": Object.entries(csp)
+        .map(([directive, sources]) => `${directive} ${sources.join(" ")}`)
+        .join("; "),
+    },
+    proxy: {
+      "/api": {
+        target: env.PROVENANT_API_ADDRESS
+          ? "http://" + env.PROVENANT_API_ADDRESS
+          : "http://127.0.0.1:9000",
+        changeOrigin: true,
+        timeout: 0,
+        proxyTimeout: 0,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // Bootstrap v5.3 still emits Sass deprecations.
+        additionalData: `@import "/src/styles/bootstrap-base.scss";`,
+        silenceDeprecations: [
+          "color-functions",
+          "global-builtin",
+          "if-function",
+          "import",
+        ],
+      },
+    },
+  },
+});

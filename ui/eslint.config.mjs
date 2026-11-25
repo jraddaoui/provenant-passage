@@ -1,0 +1,74 @@
+import pluginJs from "@eslint/js";
+import { createTypeScriptImportResolver } from "eslint-import-resolver-typescript";
+import pluginImportX from "eslint-plugin-import-x";
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import pluginVue from "eslint-plugin-vue";
+import globals from "globals";
+import tseslint from "typescript-eslint";
+
+/** @type {import('eslint').Linter.Config[]} */
+export default [
+  { files: ["**/*.{js,mjs,cjs,ts,vue}"] },
+  {
+    ignores: [
+      "build",
+      "coverage",
+      "dist",
+      "node_modules",
+      "public",
+      "src/openapi-generator",
+    ],
+  },
+  {
+    settings: {
+      "import-x/resolver-next": [
+        createTypeScriptImportResolver({
+          project: "tsconfig*.json",
+          noWarnOnMultipleProjects: true,
+        }),
+      ],
+    },
+  },
+  { languageOptions: { globals: globals.browser } },
+  pluginJs.configs.recommended,
+  pluginImportX.flatConfigs.recommended,
+  ...tseslint.configs.recommended,
+  ...pluginVue.configs["flat/essential"],
+  ...pluginVue.configs["flat/strongly-recommended"],
+  ...pluginVue.configs["flat/recommended"],
+  {
+    files: ["**/*.{ts,vue}"],
+    languageOptions: { parserOptions: { parser: tseslint.parser } },
+    rules: {
+      "import-x/no-unresolved": [
+        "error",
+        {
+          ignore: ["~icons"], // ignore unplugin-icon auto import paths.
+        },
+      ],
+      "vue/multi-word-component-names": "off", // doesn't work with auto-router paths.
+      "@typescript-eslint/naming-convention": [
+        "error",
+        {
+          selector: "function",
+          format: ["camelCase"],
+        },
+        {
+          selector: "variableLike",
+          format: ["camelCase"],
+          leadingUnderscore: "allow",
+        },
+        {
+          selector: "typeLike",
+          format: ["PascalCase"],
+        },
+      ],
+      "vue/component-name-in-template-casing": [
+        "error",
+        "PascalCase",
+        { registeredComponentsOnly: false },
+      ],
+    },
+  },
+  eslintPluginPrettierRecommended,
+];

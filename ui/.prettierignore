@@ -1,0 +1,6 @@
+typed-router.d.ts
+src/route-map.d.ts
+coverage/**
+dist/**
+node_modules/**
+src/openapi-generator/**
