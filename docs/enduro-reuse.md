@@ -36,8 +36,11 @@ profile for retries. The Pinia store keeps paging and fetching behavior; request
 sequence numbers prevent stale responses overwriting a newer page. Monitor events
 invalidate database reads, with reconnect refresh and five-second active polling.
 The UI uses an original SVG logo and a teal theme.
-The header places breadcrumbs immediately after the brand, with the theme
-control at the right. Home, upload, AIP details and reports use the shared content
+The header places breadcrumbs after the brand with `ms-3` spacing, with the
+theme control at the right. The brand link stays unadorned on hover/focus using
+`text-decoration-none`. Its 64px reserved height includes the bottom border,
+matching the sticky sidebar offset and viewport-height calculation.
+Home, upload, AIP details and reports use the shared content
 width; the details grid removes Bootstrap's negative outer row margins.
 
 Nginx/Vite proxy all API routes without request/response buffering or a body-size
@@ -51,6 +54,12 @@ The importer fixture provenance/adaptations are recorded separately in
 [importer-reuse.json](importer-reuse.json). The archive bytes remain unchanged.
 Shared Temporal activities are pinned external dependencies, not copied converter
 code. Session affinity and report validation are Passage's responsibility.
+Passage's tree generation enumerates source archive headers using its existing
+`mholt/archives` dependency and walks the generated object. It does not use or
+modify importer internals. The session uploads the source tree with the shared
+bucket-upload activity bound to the source bucket, and the OCFL tree with the
+other output sidecars. A Temporal version marker retains the prior command
+sequence when replaying workflows that passed this point before tree support.
 
 Runtime images collect available LICENSE/NOTICE/COPYRIGHT files from their
 independent module graphs; the UI distribution collects installed package notices.

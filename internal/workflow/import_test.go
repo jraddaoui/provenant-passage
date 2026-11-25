@@ -21,6 +21,7 @@ import (
 	temporalsdk_temporal "go.temporal.io/sdk/temporal"
 	temporalsdk_testsuite "go.temporal.io/sdk/testsuite"
 	temporalsdk_worker "go.temporal.io/sdk/worker"
+	temporalsdk_workflow "go.temporal.io/sdk/workflow"
 
 	"github.com/jraddaoui/provenant-passage/internal/aips"
 	"github.com/jraddaoui/provenant-passage/internal/enums"
@@ -28,11 +29,15 @@ import (
 )
 
 func TestImportWorkflow(t *testing.T) {
-	for _, scenario := range []string{"success", "import failure", "report failure", "zip failure", "upload object.zip", "upload import-event.json", "upload import-report.md", "terminal database failure", "activity retry", "session retry"} {
+	for _, scenario := range []string{"success", "legacy success", "import failure", "report failure", "tree failure", "zip failure", "upload am-aip-tree.txt", "upload ocfl-tree.txt", "upload object.zip", "upload import-event.json", "upload import-report.md", "terminal database failure", "activity retry", "session retry"} {
 		t.Run(scenario, func(t *testing.T) {
 			var suite temporalsdk_testsuite.WorkflowTestSuite
 			env := suite.NewTestWorkflowEnvironment()
 			env.SetWorkerOptions(temporalsdk_worker.Options{EnableSessionWorker: true})
+			if scenario == "legacy success" {
+				env.OnGetVersion("package-trees", temporalsdk_workflow.DefaultVersion, temporalsdk_workflow.Version(1)).
+					Return(temporalsdk_workflow.DefaultVersion)
+			}
 			var mu sync.Mutex
 			queues := map[string]string{}
 			statuses := []activities.StatusParams{}
@@ -109,6 +114,28 @@ func TestImportWorkflow(t *testing.T) {
 				}
 				return nil
 			})
+			register(activities.GenerateTreesName, func(ctx context.Context, p activities.ImportParams) error {
+				record(ctx, activities.GenerateTreesName)
+				if scenario == "tree failure" {
+					return fail()
+				}
+				return nil
+			})
+			register(
+				activities.UploadSourceTreeName,
+				func(ctx context.Context, p *bucketupload.Params) (*bucketupload.Result, error) {
+					record(ctx, activities.UploadSourceTreeName)
+					if p.Key != aips.SourceKey(req.UUID, "am-aip-tree.txt") ||
+						p.Path != filepath.Join("/scratch/attempt-"+strconv.Itoa(workspaceCount), "am-aip-tree.txt") {
+						return nil, errors.New("wrong source tree destination")
+					}
+					uploads = append(uploads, p.Key)
+					if scenario == "upload am-aip-tree.txt" {
+						return nil, fail()
+					}
+					return &bucketupload.Result{Key: p.Key}, nil
+				},
+			)
 			register(archivezip.Name, func(ctx context.Context, p *archivezip.Params) (*archivezip.Result, error) {
 				record(ctx, archivezip.Name)
 				return &archivezip.Result{Path: p.DestPath}, nil
@@ -124,6 +151,13 @@ func TestImportWorkflow(t *testing.T) {
 				bucketupload.Name,
 				func(ctx context.Context, p *bucketupload.Params) (*bucketupload.Result, error) {
 					record(ctx, bucketupload.Name)
+					if filepath.Base(p.Path) == "am-aip-tree.txt" {
+						return nil, errors.New("source tree sent to output bucket")
+					}
+					if filepath.Base(p.Path) == "ocfl-tree.txt" &&
+						(p.Key != aips.OutputKey(req.UUID, "ocfl-tree.txt") || filepath.Base(filepath.Dir(p.Path)) != "reports") {
+						return nil, errors.New("wrong OCFL tree destination")
+					}
 					uploads = append(uploads, p.Key)
 					if scenario == "upload "+filepath.Base(p.Path) {
 						return nil, fail()
@@ -150,7 +184,8 @@ func TestImportWorkflow(t *testing.T) {
 				},
 			}
 			env.ExecuteWorkflow(w.Execute, req)
-			success := scenario == "success" || scenario == "activity retry" || scenario == "session retry"
+			success := scenario == "legacy success" || scenario == "success" || scenario == "activity retry" ||
+				scenario == "session retry"
 			if success && env.GetWorkflowError() != nil {
 				t.Fatal(env.GetWorkflowError())
 			}
@@ -158,8 +193,12 @@ func TestImportWorkflow(t *testing.T) {
 				t.Fatal("failed pipeline completed")
 			}
 			last := statuses[len(statuses)-1]
+			wantUploads := 5
+			if scenario == "legacy success" {
+				wantUploads = 3
+			}
 			if success &&
-				(last.Status != enums.StatusCompleted || last.Key != aips.OutputKey(req.UUID, "object.zip") || len(uploads) != 3) {
+				(last.Status != enums.StatusCompleted || last.Key != aips.OutputKey(req.UUID, "object.zip") || len(uploads) != wantUploads) {
 				t.Fatalf("incorrect success %+v uploads %v", statuses, uploads)
 			}
 			if !success && last.Status != enums.StatusError {

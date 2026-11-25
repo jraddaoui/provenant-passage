@@ -21,13 +21,14 @@ import (
 
 // Server lists the aips service endpoint HTTP handlers.
 type Server struct {
-	Mounts   []*MountPoint
-	List     http.Handler
-	Show     http.Handler
-	Upload   http.Handler
-	Download http.Handler
-	Report   http.Handler
-	Monitor  http.Handler
+	Mounts    []*MountPoint
+	List      http.Handler
+	Show      http.Handler
+	Upload    http.Handler
+	Download  http.Handler
+	Report    http.Handler
+	Structure http.Handler
+	Monitor   http.Handler
 }
 
 // MountPoint holds information about the mounted endpoints.
@@ -62,14 +63,16 @@ func New(
 			{"Upload", "POST", "/aips/upload"},
 			{"Download", "GET", "/aips/{uuid}/download"},
 			{"Report", "GET", "/aips/{uuid}/reports/{format}"},
+			{"Structure", "GET", "/aips/{uuid}/structures/{kind}"},
 			{"Monitor", "GET", "/aips/monitor"},
 		},
-		List:     NewListHandler(e.List, mux, decoder, encoder, errhandler, formatter),
-		Show:     NewShowHandler(e.Show, mux, decoder, encoder, errhandler, formatter),
-		Upload:   NewUploadHandler(e.Upload, mux, decoder, encoder, errhandler, formatter),
-		Download: NewDownloadHandler(e.Download, mux, decoder, encoder, errhandler, formatter),
-		Report:   NewReportHandler(e.Report, mux, decoder, encoder, errhandler, formatter),
-		Monitor:  NewMonitorHandler(e.Monitor, mux, decoder, encoder, errhandler, formatter),
+		List:      NewListHandler(e.List, mux, decoder, encoder, errhandler, formatter),
+		Show:      NewShowHandler(e.Show, mux, decoder, encoder, errhandler, formatter),
+		Upload:    NewUploadHandler(e.Upload, mux, decoder, encoder, errhandler, formatter),
+		Download:  NewDownloadHandler(e.Download, mux, decoder, encoder, errhandler, formatter),
+		Report:    NewReportHandler(e.Report, mux, decoder, encoder, errhandler, formatter),
+		Structure: NewStructureHandler(e.Structure, mux, decoder, encoder, errhandler, formatter),
+		Monitor:   NewMonitorHandler(e.Monitor, mux, decoder, encoder, errhandler, formatter),
 	}
 }
 
@@ -83,6 +86,7 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.Upload = m(s.Upload)
 	s.Download = m(s.Download)
 	s.Report = m(s.Report)
+	s.Structure = m(s.Structure)
 	s.Monitor = m(s.Monitor)
 }
 
@@ -96,6 +100,7 @@ func Mount(mux goahttp.Muxer, h *Server) {
 	MountUploadHandler(mux, h.Upload)
 	MountDownloadHandler(mux, h.Download)
 	MountReportHandler(mux, h.Report)
+	MountStructureHandler(mux, h.Structure)
 	MountMonitorHandler(mux, h.Monitor)
 }
 
@@ -398,6 +403,94 @@ func NewReportHandler(
 			return
 		}
 		o := res.(*aips.ReportResponseData)
+		defer o.Body.Close()
+		if wt, ok := o.Body.(io.WriterTo); ok {
+			if err := encodeResponse(ctx, w, o.Result); err != nil {
+				if errhandler != nil {
+					errhandler(ctx, w, err)
+				}
+				return
+			}
+			n, err := wt.WriteTo(w)
+			if err != nil {
+				if n == 0 {
+					if err := encodeError(ctx, w, err); err != nil && errhandler != nil {
+						errhandler(ctx, w, err)
+					}
+				} else {
+					http.NewResponseController(w).Flush()
+					panic(http.ErrAbortHandler) // too late to write an error
+				}
+			}
+			return
+		}
+		// handle immediate read error like a returned error
+		buf := bufio.NewReader(o.Body)
+		if _, err := buf.Peek(1); err != nil && err != io.EOF {
+			if err := encodeError(ctx, w, err); err != nil && errhandler != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, o.Result); err != nil {
+			if errhandler != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if _, err := io.Copy(w, buf); err != nil {
+			http.NewResponseController(w).Flush()
+			panic(http.ErrAbortHandler) // too late to write an error
+		}
+	})
+}
+
+// MountStructureHandler configures the mux to serve the "aips" service
+// "structure" endpoint.
+func MountStructureHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("GET", "/aips/{uuid}/structures/{kind}", f)
+}
+
+// NewStructureHandler creates a HTTP handler which loads the HTTP request and
+// calls the "aips" service "structure" endpoint.
+func NewStructureHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(ctx context.Context, err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeStructureRequest(mux, decoder)
+		encodeResponse = EncodeStructureResponse(encoder)
+		encodeError    = EncodeStructureError(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "structure")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "aips")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil && errhandler != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil && errhandler != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		o := res.(*aips.StructureResponseData)
 		defer o.Body.Close()
 		if wt, ok := o.Body.(io.WriterTo); ok {
 			if err := encodeResponse(ctx, w, o.Result); err != nil {

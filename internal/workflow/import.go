@@ -177,6 +177,13 @@ func (w *Workflow) session(
 	if err = temporalsdk_workflow.ExecuteActivity(sess, activities.InspectReportsName, p).Get(sess, nil); err != nil {
 		return "", err
 	}
+	version := temporalsdk_workflow.GetVersion(sess, "package-trees", temporalsdk_workflow.DefaultVersion, 1)
+	if version != temporalsdk_workflow.DefaultVersion {
+		if err = temporalsdk_workflow.ExecuteActivity(sess, activities.GenerateTreesName, p).
+			Get(sess, nil); err != nil {
+			return "", err
+		}
+	}
 	zipPath := path.Join(workspace, "object.zip")
 	if err = temporalsdk_workflow.ExecuteActivity(sess, archivezip.Name,
 		&archivezip.Params{SourceDir: path.Join(workspace, "object"), DestPath: zipPath}).Get(sess, nil); err != nil {
@@ -186,7 +193,21 @@ func (w *Workflow) session(
 		Get(sess, nil); err != nil {
 		return "", err
 	}
-	for _, name := range []string{"object.zip", "import-event.json", "import-report.md"} {
+	outputs := []string{"object.zip", "import-event.json", "import-report.md"}
+	if version != temporalsdk_workflow.DefaultVersion {
+		if err = temporalsdk_workflow.ExecuteActivity(
+			sess,
+			activities.UploadSourceTreeName,
+			&bucketupload.Params{
+				Path: path.Join(workspace, "am-aip-tree.txt"),
+				Key:  aips.SourceKey(r.UUID, "am-aip-tree.txt"),
+			},
+		).Get(sess, nil); err != nil {
+			return "", err
+		}
+		outputs = append(outputs, "ocfl-tree.txt")
+	}
+	for _, name := range outputs {
 		local := zipPath
 		if name != "object.zip" {
 			local = path.Join(workspace, "reports", name)

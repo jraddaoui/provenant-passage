@@ -10,7 +10,7 @@ useLayoutStore().updateBreadcrumb([]);
     <p class="text-uppercase small fw-semibold text-body-secondary mb-2">
       Provenant Passage
     </p>
-    <h1 class="display-5 mb-4">Provenant workflows,<br />on the web.</h1>
+    <h1 class="display-5 mb-4">Provenant workflows, on the web.</h1>
     <p class="lead mb-4">
       Its first workflow turns an Archivematica AIP into a downloadable OCFL
       object using <code>provenant-import</code>.

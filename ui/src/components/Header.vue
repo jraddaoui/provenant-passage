@@ -33,10 +33,10 @@ const layout = useLayoutStore();
       </button>
       <RouterLink
         to="/"
-        class="navbar-brand m-0 d-flex align-items-center gap-2 fw-semibold text-primary flex-shrink-0"
+        class="navbar-brand text-decoration-none m-0 d-flex align-items-center gap-2 fw-semibold text-primary flex-shrink-0"
         ><Logo /><span>Provenant Passage</span></RouterLink
       >
-      <div class="ms-4 flex-grow-1 min-w-0 d-none d-lg-block overflow-hidden">
+      <div class="ms-3 flex-grow-1 min-w-0 d-none d-lg-block overflow-hidden">
         <Breadcrumb />
       </div>
       <ThemeToggle compact class="ms-auto me-2 flex-shrink-0" />
@@ -48,7 +48,8 @@ header {
   min-height: $header-height;
 }
 .navbar {
-  min-height: $header-height;
+  // Include the header border in the height reserved above the sidebar.
+  min-height: calc($header-height - var(--bs-border-width));
 }
 @media (max-width: 400px) {
   .navbar-brand {

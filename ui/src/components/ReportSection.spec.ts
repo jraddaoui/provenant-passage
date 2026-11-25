@@ -23,7 +23,7 @@ it("starts collapsed, fetches JSON on expansion and displays literal text in a p
   vi.stubGlobal("fetch", fetch);
   const wrapper = mount(ReportSection, { props: { uuid, format: "json" } });
 
-  expect(wrapper.get("summary").text()).toBe("JSON report");
+  expect(wrapper.get("summary").text()).toBe("Import event record");
   expect((wrapper.get("details").element as HTMLDetailsElement).open).toBe(
     false,
   );
@@ -48,7 +48,7 @@ it("renders Markdown headings, tables and code while sanitizing active HTML", as
     '# Import report\n\n| Result | Count |\n| --- | --- |\n| Preserved | 18 |\n\n`file.txt`\n\n<script>alert(1)</script>\n\n<img src=x onerror="alert(1)">\n\n[unsafe](javascript:alert%281%29)';
   vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(text)));
   const wrapper = mount(ReportSection, { props: { uuid, format: "md" } });
-  expect(wrapper.get("summary").text()).toBe("Markdown report");
+  expect(wrapper.get("summary").text()).toBe("Content preservation report");
   await expand(wrapper);
   expect(wrapper.get("h1").text()).toBe("Import report");
   expect(wrapper.get("table td").text()).toBe("Preserved");

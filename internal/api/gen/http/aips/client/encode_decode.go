@@ -805,6 +805,160 @@ func DecodeReportResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 	}
 }
 
+// BuildStructureRequest instantiates a HTTP request object with method and
+// path set to call the "aips" service "structure" endpoint
+func (c *Client) BuildStructureRequest(ctx context.Context, v any) (*http.Request, error) {
+	var (
+		uuid string
+		kind string
+	)
+	{
+		p, ok := v.(*aips.StructurePayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("aips", "structure", "*aips.StructurePayload", v)
+		}
+		uuid = p.UUID
+		kind = p.Kind
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: StructureAipsPath(uuid, kind)}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("aips", "structure", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// DecodeStructureResponse returns a decoder for responses returned by the aips
+// structure endpoint. restoreBody controls whether the response body should be
+// restored after having been read.
+// DecodeStructureResponse may return the following errors:
+//   - "not_found" (type *goa.ServiceError): http.StatusNotFound
+//   - "not_valid" (type *goa.ServiceError): http.StatusBadRequest
+//   - "not_ready" (type *goa.ServiceError): http.StatusConflict
+//   - "unavailable" (type *goa.ServiceError): http.StatusServiceUnavailable
+//   - "internal_error" (type *goa.ServiceError): http.StatusInternalServerError
+//   - error: internal error
+func DecodeStructureResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (any, error) {
+	return func(resp *http.Response) (any, error) {
+		if restoreBody {
+			b, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = io.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = io.NopCloser(bytes.NewBuffer(b))
+			}()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				contentType   string
+				contentLength int64
+				err           error
+			)
+			contentTypeRaw := resp.Header.Get("Content-Type")
+			if contentTypeRaw == "" {
+				err = goa.MergeErrors(err, goa.MissingFieldError("content_type", "header"))
+			}
+			contentType = contentTypeRaw
+			{
+				contentLengthRaw := resp.Header.Get("Content-Length")
+				if contentLengthRaw == "" {
+					return nil, goahttp.ErrValidationError("aips", "structure", goa.MissingFieldError("content_length", "header"))
+				}
+				v, err2 := strconv.ParseInt(contentLengthRaw, 10, 64)
+				if err2 != nil {
+					err = goa.MergeErrors(err, goa.InvalidFieldTypeError("content_length", contentLengthRaw, "integer"))
+				}
+				contentLength = v
+			}
+			if err != nil {
+				return nil, goahttp.ErrValidationError("aips", "structure", err)
+			}
+			res := NewStructureResultOK(contentType, contentLength)
+			return res, nil
+		case http.StatusNotFound:
+			var (
+				body StructureNotFoundResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("aips", "structure", err)
+			}
+			err = ValidateStructureNotFoundResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("aips", "structure", err)
+			}
+			return nil, NewStructureNotFound(&body)
+		case http.StatusBadRequest:
+			var (
+				body StructureNotValidResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("aips", "structure", err)
+			}
+			err = ValidateStructureNotValidResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("aips", "structure", err)
+			}
+			return nil, NewStructureNotValid(&body)
+		case http.StatusConflict:
+			var (
+				body StructureNotReadyResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("aips", "structure", err)
+			}
+			err = ValidateStructureNotReadyResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("aips", "structure", err)
+			}
+			return nil, NewStructureNotReady(&body)
+		case http.StatusServiceUnavailable:
+			var (
+				body StructureUnavailableResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("aips", "structure", err)
+			}
+			err = ValidateStructureUnavailableResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("aips", "structure", err)
+			}
+			return nil, NewStructureUnavailable(&body)
+		case http.StatusInternalServerError:
+			var (
+				body StructureInternalErrorResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("aips", "structure", err)
+			}
+			err = ValidateStructureInternalErrorResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("aips", "structure", err)
+			}
+			return nil, NewStructureInternalError(&body)
+		default:
+			body, _ := io.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("aips", "structure", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // BuildMonitorRequest instantiates a HTTP request object with method and path
 // set to call the "aips" service "monitor" endpoint
 func (c *Client) BuildMonitorRequest(ctx context.Context, v any) (*http.Request, error) {

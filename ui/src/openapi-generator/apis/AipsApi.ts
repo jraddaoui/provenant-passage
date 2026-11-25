@@ -52,6 +52,11 @@ export interface AipsShowRequest {
     uuid: string;
 }
 
+export interface AipsStructureRequest {
+    uuid: string;
+    kind: AipsStructureKindEnum;
+}
+
 export interface AipsUploadRequest {
     contentType: string;
     profile?: AipsUploadProfileEnum;
@@ -181,6 +186,32 @@ export interface AipsApiInterface {
      * show aips
      */
     aipsShow(requestParameters: AipsShowRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ProvenantAip>;
+
+    /**
+     * Creates request options for aipsStructure without sending the request
+     * @param {string} uuid Import request UUID
+     * @param {'aip' | 'ocfl'} kind 
+     * @throws {RequiredError}
+     * @memberof AipsApiInterface
+     */
+    aipsStructureRequestOpts(requestParameters: AipsStructureRequest): Promise<runtime.RequestOpts>;
+
+    /**
+     * Stream a stored package tree for a completed AIP.
+     * @summary structure aips
+     * @param {string} uuid Import request UUID
+     * @param {'aip' | 'ocfl'} kind 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AipsApiInterface
+     */
+    aipsStructureRaw(requestParameters: AipsStructureRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>>;
+
+    /**
+     * Stream a stored package tree for a completed AIP.
+     * structure aips
+     */
+    aipsStructure(requestParameters: AipsStructureRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob>;
 
     /**
      * Creates request options for aipsUpload without sending the request
@@ -442,6 +473,61 @@ export class AipsApi extends runtime.BaseAPI implements AipsApiInterface {
     }
 
     /**
+     * Creates request options for aipsStructure without sending the request
+     */
+    async aipsStructureRequestOpts(requestParameters: AipsStructureRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling aipsStructure().'
+            );
+        }
+
+        if (requestParameters['kind'] == null) {
+            throw new runtime.RequiredError(
+                'kind',
+                'Required parameter "kind" was null or undefined when calling aipsStructure().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/aips/{uuid}/structures/{kind}`;
+        urlPath = urlPath.replace('{uuid}', encodeURIComponent(String(requestParameters['uuid'])));
+        urlPath = urlPath.replace('{kind}', encodeURIComponent(String(requestParameters['kind'])));
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Stream a stored package tree for a completed AIP.
+     * structure aips
+     */
+    async aipsStructureRaw(requestParameters: AipsStructureRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>> {
+        const requestOptions = await this.aipsStructureRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.BlobApiResponse(response);
+    }
+
+    /**
+     * Stream a stored package tree for a completed AIP.
+     * structure aips
+     */
+    async aipsStructure(requestParameters: AipsStructureRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob> {
+        const response = await this.aipsStructureRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Creates request options for aipsUpload without sending the request
      */
     async aipsUploadRequestOpts(requestParameters: AipsUploadRequest): Promise<runtime.RequestOpts> {
@@ -503,6 +589,14 @@ export const AipsReportFormatEnum = {
     Md: 'md'
 } as const;
 export type AipsReportFormatEnum = typeof AipsReportFormatEnum[keyof typeof AipsReportFormatEnum];
+/**
+ * @export
+ */
+export const AipsStructureKindEnum = {
+    Aip: 'aip',
+    Ocfl: 'ocfl'
+} as const;
+export type AipsStructureKindEnum = typeof AipsStructureKindEnum[keyof typeof AipsStructureKindEnum];
 /**
  * @export
  */

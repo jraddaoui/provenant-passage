@@ -29,7 +29,10 @@ See `docs/evidence/local/final-source-check.json` and the source inventories.
 ## Report viewing
 
 Added 2026-11-25 with OpenAI Codex assistance: completed AIP details include
-collapsed JSON and Markdown sections. `GET /aips/{uuid}/reports/{format}` accepts
+collapsed **Import event record** and **Content preservation report**
+sections. A short paragraph before the JSON explains the source checksum,
+import time/outcome, content checks, and omitted or unaccounted content.
+`GET /aips/{uuid}/reports/{format}` accepts
 only `json` or `md`, streams the fixed output-bucket report key, and closes the
 reader. It returns 404 for missing AIPs/blobs and 409 for incomplete imports.
 It uses the same access boundary as the existing AIP API; authentication remains
@@ -67,6 +70,86 @@ at 1440px, 1024px and 390px without horizontal page overflow. Screenshots and
 measurements are `docs/evidence/local/browser/layout-*.png` and
 `layout-result.json`. Browser checks disable cache to avoid reusing pre-rebuild
 page assets. The local UI image was rebuilt; backend behavior was unchanged.
+
+The header breadcrumb uses `ms-3` (16px), and the title link uses
+`text-decoration-none`. UI checks and REUSE passed; the local UI rebuilt.
+Browser checks confirmed the spacing and no title underline on hover or focus.
+Evidence: `docs/evidence/local/browser/header-spacing-result.json` and
+`header-title-hover.png` beside it.
+
+Report naming follow-up: the section titles describe their contents, and the
+JSON introduction appears inside the expanded section before the literal text.
+`npm run check` and REUSE passed; the local UI image rebuilt. Browser checks
+confirmed both labels, initial collapse, the explanation placement, rendered
+content report, and 1440px/390px layouts without page overflow. Evidence is
+`docs/evidence/local/browser/report-labels-result.json` and
+`report-labels-1440.png` / `report-labels-390.png` beside it.
+
+Page-height fix: the navbar's 64px minimum plus the header's 1px border made
+short desktop/tablet pages one pixel taller than the viewport, because the
+sidebar reserved only 64px. The navbar now accounts for that border, keeping the
+whole header at 64px. Browser regression checks compare document and viewport
+heights for short home/details pages at 1440px, plus home at 820px and 390px.
+All now fit without main-page overflow; expanded structures still scroll and
+the header/sidebar remain aligned. UI checks and REUSE passed; the local UI
+rebuilt. Evidence is `docs/evidence/local/browser/page-height-before.json`,
+`page-height-result.json`, `page-height-long-content.json`, and the
+`page-height-*.png` screenshots beside them. Tree/report scrolling was unchanged.
+
+## Package structure viewing
+
+Added 2026-11-25 with OpenAI Codex assistance: the session generates
+`am-aip-tree.txt` from TAR/7z archive entries and `ocfl-tree.txt` from the
+complete generated object. The source tree is stored in
+`am-aips/aips/{uuid}/`; the OCFL tree is stored in
+`ocfl-objects/aips/{uuid}/` beside the reports. Neither is inserted into the
+archive or OCFL object. Trees sort directories first, include implicit/empty
+folders and end with counts excluding the root. Control characters and
+backslashes in names are quoted; conflicting paths and unsupported special
+entries fail generation instead of silently omitting entries.
+
+`GET /aips/{uuid}/structures/{kind}` streams plain text from the fixed source
+(`aip`) or output (`ocfl`) key. Completed details have an initially collapsed
+**Package structures** section above the reports, with equal desktop columns
+and independently scrollable `pre` elements. Medium and smaller screens (below
+992px) stack the columns, as requested in the responsive layout follow-up.
+Loading is lazy, reopening is cached, failures can be retried independently,
+and leaving the record cancels pending requests. Missing older sidecars return
+404; incomplete imports return 409. A Temporal version marker preserves the
+old command sequence for histories that already passed the new generation
+point. There is no backfill; re-upload creates tree sidecars for an older AIP.
+
+Local checks passed: formatting/lint, backend tests and race tests, vet,
+workflowcheck, UI lint/format/type checks/tests/build, generated/module hygiene
+(67 unchanged files), and REUSE (235 files). Tests cover both archive formats
+and all three profiles, exact trees/counts, empty/implicit folders, escaped
+names, conflicting paths, cancellation, both bucket routes and HTTP errors,
+new generation/upload failures, session retry and the legacy workflow branch.
+Both local Tilt images rebuilt successfully.
+
+Fresh browser upload `977f6bac-29a5-4b86-a329-2a4c9a343908` used the published
+CSVmultiLevel TAR with `files_and_metadata` (CLI profile `b`) and fixed import
+time `2026-11-25T19:28:50Z`. The AIP tree has 12 directories and 23 files; the
+OCFL tree has 13 directories and 23 files. API text equals both displayed text
+and stored bucket bytes. Independent Python listings of the TAR and downloaded
+ZIP match the trees exactly. All 23 object files and both original reports
+match a direct run of the unchanged local importer. This is one fresh parity
+case, not a rerun of the twelve-case matrix below.
+
+Browser checks passed initial collapse, section order, lazy loading, cached
+reopening, full content width and equal columns at 1440/1024px, 390px stacking
+without page overflow, both themes, existing reports and ZIP download.
+Evidence: `docs/evidence/local/structures/result.json`,
+`docs/evidence/local/browser/structures-result.json`, and `structures-*.png`
+beside the browser record. Remote CI and human review remain pending.
+
+The structure stacking breakpoint was extended from 768px to 992px at the
+user's request. UI checks passed and the local UI rebuilt. Browser measurements
+confirm two columns at 1200/992px and two rows at 991/820/768/390px, without
+horizontal page overflow. Current evidence and screenshots are
+`docs/evidence/local/browser/structures-responsive-result.json` and
+`structures-responsive-992.png`, `structures-responsive-820.png`, and
+`structures-responsive-390.png` beside it.
 
 ## Browser and exact CLI comparison
 

@@ -26,12 +26,14 @@ import (
 )
 
 const (
-	CreateWorkspaceName = "create-workspace"
-	RunImporterName     = "run-importer"
-	InspectReportsName  = "inspect-reports"
-	ValidateZIPName     = "validate-zip"
-	RetainReportsName   = "retain-reports"
-	UpdateStatusName    = "update-aip-status"
+	CreateWorkspaceName  = "create-workspace"
+	RunImporterName      = "run-importer"
+	InspectReportsName   = "inspect-reports"
+	GenerateTreesName    = "generate-trees"
+	UploadSourceTreeName = "upload-source-tree"
+	ValidateZIPName      = "validate-zip"
+	RetainReportsName    = "retain-reports"
+	UpdateStatusName     = "update-aip-status"
 )
 
 type Activities struct {

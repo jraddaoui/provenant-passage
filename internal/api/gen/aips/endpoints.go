@@ -17,12 +17,13 @@ import (
 
 // Endpoints wraps the "aips" service endpoints.
 type Endpoints struct {
-	List     goa.Endpoint
-	Show     goa.Endpoint
-	Upload   goa.Endpoint
-	Download goa.Endpoint
-	Report   goa.Endpoint
-	Monitor  goa.Endpoint
+	List      goa.Endpoint
+	Show      goa.Endpoint
+	Upload    goa.Endpoint
+	Download  goa.Endpoint
+	Report    goa.Endpoint
+	Structure goa.Endpoint
+	Monitor   goa.Endpoint
 }
 
 // UploadRequestData holds both the payload and the HTTP request body reader of
@@ -52,6 +53,15 @@ type ReportResponseData struct {
 	Body io.ReadCloser
 }
 
+// StructureResponseData holds both the result and the HTTP response body
+// reader of the "structure" method.
+type StructureResponseData struct {
+	// Result is the method result.
+	Result *StructureResult
+	// Body streams the HTTP response body.
+	Body io.ReadCloser
+}
+
 // MonitorEndpointInput holds both the payload and the server stream of the
 // "monitor" method.
 type MonitorEndpointInput struct {
@@ -62,12 +72,13 @@ type MonitorEndpointInput struct {
 // NewEndpoints wraps the methods of the "aips" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		List:     NewListEndpoint(s),
-		Show:     NewShowEndpoint(s),
-		Upload:   NewUploadEndpoint(s),
-		Download: NewDownloadEndpoint(s),
-		Report:   NewReportEndpoint(s),
-		Monitor:  NewMonitorEndpoint(s),
+		List:      NewListEndpoint(s),
+		Show:      NewShowEndpoint(s),
+		Upload:    NewUploadEndpoint(s),
+		Download:  NewDownloadEndpoint(s),
+		Report:    NewReportEndpoint(s),
+		Structure: NewStructureEndpoint(s),
+		Monitor:   NewMonitorEndpoint(s),
 	}
 }
 
@@ -78,6 +89,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.Upload = m(e.Upload)
 	e.Download = m(e.Download)
 	e.Report = m(e.Report)
+	e.Structure = m(e.Structure)
 	e.Monitor = m(e.Monitor)
 }
 
@@ -136,6 +148,19 @@ func NewReportEndpoint(s Service) goa.Endpoint {
 			return nil, err
 		}
 		return &ReportResponseData{Result: res, Body: body}, nil
+	}
+}
+
+// NewStructureEndpoint returns an endpoint function that calls the method
+// "structure" of service "aips".
+func NewStructureEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req any) (any, error) {
+		p := req.(*StructurePayload)
+		res, body, err := s.Structure(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+		return &StructureResponseData{Result: res, Body: body}, nil
 	}
 }
 

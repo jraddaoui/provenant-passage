@@ -500,6 +500,96 @@ type ReportInternalErrorResponseBody struct {
 	Fault bool `form:"fault" json:"fault" xml:"fault"`
 }
 
+// StructureNotFoundResponseBody is the type of the "aips" service "structure"
+// endpoint HTTP response body for the "not_found" error.
+type StructureNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// StructureNotValidResponseBody is the type of the "aips" service "structure"
+// endpoint HTTP response body for the "not_valid" error.
+type StructureNotValidResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// StructureNotReadyResponseBody is the type of the "aips" service "structure"
+// endpoint HTTP response body for the "not_ready" error.
+type StructureNotReadyResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// StructureUnavailableResponseBody is the type of the "aips" service
+// "structure" endpoint HTTP response body for the "unavailable" error.
+type StructureUnavailableResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// StructureInternalErrorResponseBody is the type of the "aips" service
+// "structure" endpoint HTTP response body for the "internal_error" error.
+type StructureInternalErrorResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
 // MonitorNotFoundResponseBody is the type of the "aips" service "monitor"
 // endpoint HTTP response body for the "not_found" error.
 type MonitorNotFoundResponseBody struct {
@@ -1258,6 +1348,76 @@ func NewReportInternalErrorResponseBody(res *goa.ServiceError) *ReportInternalEr
 	return body
 }
 
+// NewStructureNotFoundResponseBody builds the HTTP response body from the
+// result of the "structure" endpoint of the "aips" service.
+func NewStructureNotFoundResponseBody(res *goa.ServiceError) *StructureNotFoundResponseBody {
+	body := &StructureNotFoundResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewStructureNotValidResponseBody builds the HTTP response body from the
+// result of the "structure" endpoint of the "aips" service.
+func NewStructureNotValidResponseBody(res *goa.ServiceError) *StructureNotValidResponseBody {
+	body := &StructureNotValidResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewStructureNotReadyResponseBody builds the HTTP response body from the
+// result of the "structure" endpoint of the "aips" service.
+func NewStructureNotReadyResponseBody(res *goa.ServiceError) *StructureNotReadyResponseBody {
+	body := &StructureNotReadyResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewStructureUnavailableResponseBody builds the HTTP response body from the
+// result of the "structure" endpoint of the "aips" service.
+func NewStructureUnavailableResponseBody(res *goa.ServiceError) *StructureUnavailableResponseBody {
+	body := &StructureUnavailableResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewStructureInternalErrorResponseBody builds the HTTP response body from the
+// result of the "structure" endpoint of the "aips" service.
+func NewStructureInternalErrorResponseBody(res *goa.ServiceError) *StructureInternalErrorResponseBody {
+	body := &StructureInternalErrorResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
 // NewMonitorNotFoundResponseBody builds the HTTP response body from the result
 // of the "monitor" endpoint of the "aips" service.
 func NewMonitorNotFoundResponseBody(res *goa.ServiceError) *MonitorNotFoundResponseBody {
@@ -1367,6 +1527,15 @@ func NewReportPayload(uuid string, format string) *aips.ReportPayload {
 	v := &aips.ReportPayload{}
 	v.UUID = uuid
 	v.Format = format
+
+	return v
+}
+
+// NewStructurePayload builds a aips service structure endpoint payload.
+func NewStructurePayload(uuid string, kind string) *aips.StructurePayload {
+	v := &aips.StructurePayload{}
+	v.UUID = uuid
+	v.Kind = kind
 
 	return v
 }

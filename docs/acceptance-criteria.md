@@ -16,7 +16,7 @@ reproduced results and gaps separately from these requirements.
 - Use UUIDs for import requests without replacing the source BagIt identifier.
   Persist one whole-second UTC creation time and reuse it for every retry.
 - Keep status to queued, processing, completed, error and canceled. Completion
-  requires clean importer reports, a validated ZIP and all three output uploads.
+  requires clean importer reports, a validated ZIP, both tree files and all output uploads.
   Failed or canceled imports offer no download.
 - Keep all activities using local files in one Temporal session. Session loss
   requires a new workspace and source redownload. Redis carries transient UI
@@ -24,8 +24,23 @@ reproduced results and gaps separately from these requirements.
 - Download a ZIP containing one `object/` directory with the unchanged OCFL
   object. Store `import-event.json` and `import-report.md` separately in the
   output bucket.
+- Generate ASCII tree sidecars with directory/file counts (root excluded),
+  including implicit/empty directories and all OCFL versions. Save
+  `am-aip-tree.txt` beside the original archive in `am-aips/aips/{uuid}/` and
+  `ocfl-tree.txt` beside the reports in `ocfl-objects/aips/{uuid}/`. Leave source
+  archive bytes, OCFL content and importer reports unchanged.
+- Show an initially collapsed **Package structures** section above the two
+  reports. It fills the details content width, with labeled AM AIP and OCFL
+  `pre` elements side by side at 992px and above, stacked below 992px. Load
+  each tree on expansion through `GET /aips/{uuid}/structures/{kind}` (`aip`
+  or `ocfl`). Stream plain text from its fixed bucket key. Handle independent
+  loading, retries and cancellation as for reports. Missing legacy sidecars
+  return 404; incomplete imports return 409.
 - For completed AIPs, show two initially collapsed report sections below the
-  details. Load each report on expansion through
+  details: **Import event record** and **Content preservation report**.
+  Explain the JSON record's source checksum, import time/outcome, content checks
+  and omitted/unaccounted content before its `pre` element.
+  Load each report on expansion through
   `GET /aips/{uuid}/reports/{format}` (`json` or `md`), streaming the stored bytes
   through the API without exposing bucket access. Render sanitized Markdown and
   literal JSON in a `pre` element. Show loading/errors and allow retry. Unknown

@@ -142,3 +142,32 @@ func BuildReportPayload(aipsReportUUID string, aipsReportFormat string) (*aips.R
 
 	return v, nil
 }
+
+// BuildStructurePayload builds the payload for the aips structure endpoint
+// from CLI flags.
+func BuildStructurePayload(aipsStructureUUID string, aipsStructureKind string) (*aips.StructurePayload, error) {
+	var err error
+	var uuid string
+	{
+		uuid = aipsStructureUUID
+		err = goa.MergeErrors(err, goa.ValidateFormat("uuid", uuid, goa.FormatUUID))
+		if err != nil {
+			return nil, err
+		}
+	}
+	var kind string
+	{
+		kind = aipsStructureKind
+		if !(kind == "aip" || kind == "ocfl") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("kind", kind, []any{"aip", "ocfl"}))
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+	v := &aips.StructurePayload{}
+	v.UUID = uuid
+	v.Kind = kind
+
+	return v, nil
+}

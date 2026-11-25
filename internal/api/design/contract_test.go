@@ -20,7 +20,7 @@ func TestGeneratedRoutes(t *testing.T) {
 	if err := json.Unmarshal(data, &spec); err != nil {
 		t.Fatal(err)
 	}
-	for _, path := range []string{"/aips", "/aips/{uuid}", "/aips/upload", "/aips/{uuid}/download", "/aips/{uuid}/reports/{format}", "/aips/monitor"} {
+	for _, path := range []string{"/aips", "/aips/{uuid}", "/aips/upload", "/aips/{uuid}/download", "/aips/{uuid}/reports/{format}", "/aips/monitor", "/aips/{uuid}/structures/{kind}"} {
 		if _, ok := spec.Paths[path]; !ok {
 			t.Errorf("missing contract route %s", path)
 		}

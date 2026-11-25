@@ -37,6 +37,10 @@ type Client struct {
 	// Report Doer is the HTTP client used to make requests to the report endpoint.
 	ReportDoer goahttp.Doer
 
+	// Structure Doer is the HTTP client used to make requests to the structure
+	// endpoint.
+	StructureDoer goahttp.Doer
+
 	// Monitor Doer is the HTTP client used to make requests to the monitor
 	// endpoint.
 	MonitorDoer goahttp.Doer
@@ -66,6 +70,7 @@ func NewClient(
 		UploadDoer:          doer,
 		DownloadDoer:        doer,
 		ReportDoer:          doer,
+		StructureDoer:       doer,
 		MonitorDoer:         doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
@@ -187,6 +192,30 @@ func (c *Client) Report() goa.Endpoint {
 			return nil, err
 		}
 		return &aips.ReportResponseData{Result: res.(*aips.ReportResult), Body: resp.Body}, nil
+	}
+}
+
+// Structure returns an endpoint that makes HTTP requests to the aips service
+// structure server.
+func (c *Client) Structure() goa.Endpoint {
+	var (
+		decodeResponse = DecodeStructureResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v any) (any, error) {
+		req, err := c.BuildStructureRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.StructureDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("aips", "structure", err)
+		}
+		res, err := decodeResponse(resp)
+		if err != nil {
+			resp.Body.Close()
+			return nil, err
+		}
+		return &aips.StructureResponseData{Result: res.(*aips.StructureResult), Body: resp.Body}, nil
 	}
 }
 

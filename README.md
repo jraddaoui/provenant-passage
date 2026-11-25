@@ -89,11 +89,14 @@ archive. All options receive OCFL inventories and checksums.
 
 Click Uppy's upload button. The chosen option stays fixed for retries. The AIPs
 page shows queued, processing, completed, error or canceled requests, newest
-first. Open an AIP for details. A completed import offers **Download ZIP**,
-containing one `object/` directory with the unchanged OCFL object. Below the
-details, expand **JSON report** or **Markdown report** to view the separately
-stored reports. Each section loads through the API on first expansion; JSON is
-shown as preformatted text and Markdown is rendered with sanitized HTML.
+first. Open an AIP for details. A completed import offers **Download OCFL object**,
+a ZIP containing one `object/` directory with the unchanged OCFL object. Below the
+details, expand **Package structures** to compare the AM AIP and OCFL trees
+side by side (stacked below 992px), or expand **Import event record**
+or **Content preservation report** to view the separately stored reports. Each
+section loads through the API on first expansion; JSON is
+introduced with a short explanation and shown as preformatted text; the content
+preservation report is rendered with sanitized HTML.
 An error or cancellation has no download or report sections.
 If an upload response is interrupted, check the AIPs list before manually retrying;
 the server may already have accepted it.
@@ -104,8 +107,16 @@ Goa's streaming API stores the original archive in `am-aips`, persists one AIP
 row in MySQL, and starts a UUID-addressed Temporal workflow. A session keeps
 download, conversion, report checks, ZIP creation and output uploads on one worker.
 Worker loss starts a new workspace and redownloads the source. Success requires
-clean reports, valid ZIP and all three output uploads before committing the
-`ocfl-objects` key. Redis Pub/Sub carries transient update notifications; the UI
+clean reports, valid ZIP, both tree files and all output uploads before committing the
+`ocfl-objects` key. The workflow lists source archive entries into
+`am-aips/aips/{uuid}/am-aip-tree.txt` beside the original AIP and writes the
+complete generated object tree to `ocfl-objects/aips/{uuid}/ocfl-tree.txt`
+beside the two reports. These sidecars do not modify either package. Trees
+include empty and implicit directories, sort directories before files, and end
+with counts excluding the root directory. The UI loads them as literal text
+through `GET /aips/{uuid}/structures/{kind}` (`aip` or `ocfl`) on expansion.
+Older imports have no tree sidecars and display a missing-structure error;
+re-uploading creates them. Redis Pub/Sub carries transient update notifications; the UI
 refetches after reconnect and polls active imports to recover missed events.
 
 The application database is `provenant`, with one domain table. Temporal uses

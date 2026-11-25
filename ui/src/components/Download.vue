@@ -10,7 +10,7 @@ defineProps<{ aip: ProvenantAip }>();
     class="btn btn-sm btn-outline-primary text-nowrap"
     :href="`${getPath()}/aips/${encodeURIComponent(aip.uuid)}/download`"
     download
-    >Download ZIP</a
+    >Download OCFL object</a
   ><span v-else class="text-body-secondary" aria-label="Download unavailable"
     >-</span
   >

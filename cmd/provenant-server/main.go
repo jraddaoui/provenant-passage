@@ -174,7 +174,9 @@ func serve(file string) error {
 	for name, fn := range map[string]any{
 		activities.CreateWorkspaceName: acts.CreateWorkspace, activities.RunImporterName: acts.RunImporter,
 		activities.InspectReportsName: acts.InspectReports, activities.ValidateZIPName: acts.ValidateZIP,
-		activities.RetainReportsName: acts.RetainReports, archivezip.Name: acts.ZIP,
+		activities.GenerateTreesName:    acts.GenerateTrees,
+		activities.UploadSourceTreeName: bucketupload.New(source).Execute,
+		activities.RetainReportsName:    acts.RetainReports, archivezip.Name: acts.ZIP,
 		bucketdownload.Name: bucketdownload.New(source).Execute, bucketupload.Name: bucketupload.New(output).Execute,
 		removepaths.Name: removepaths.New().Execute,
 	} {

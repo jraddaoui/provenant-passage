@@ -17,23 +17,25 @@ import (
 
 // Client is the "aips" service client.
 type Client struct {
-	ListEndpoint     goa.Endpoint
-	ShowEndpoint     goa.Endpoint
-	UploadEndpoint   goa.Endpoint
-	DownloadEndpoint goa.Endpoint
-	ReportEndpoint   goa.Endpoint
-	MonitorEndpoint  goa.Endpoint
+	ListEndpoint      goa.Endpoint
+	ShowEndpoint      goa.Endpoint
+	UploadEndpoint    goa.Endpoint
+	DownloadEndpoint  goa.Endpoint
+	ReportEndpoint    goa.Endpoint
+	StructureEndpoint goa.Endpoint
+	MonitorEndpoint   goa.Endpoint
 }
 
 // NewClient initializes a "aips" service client given the endpoints.
-func NewClient(list, show, upload, download, report, monitor goa.Endpoint) *Client {
+func NewClient(list, show, upload, download, report, structure, monitor goa.Endpoint) *Client {
 	return &Client{
-		ListEndpoint:     list,
-		ShowEndpoint:     show,
-		UploadEndpoint:   upload,
-		DownloadEndpoint: download,
-		ReportEndpoint:   report,
-		MonitorEndpoint:  monitor,
+		ListEndpoint:      list,
+		ShowEndpoint:      show,
+		UploadEndpoint:    upload,
+		DownloadEndpoint:  download,
+		ReportEndpoint:    report,
+		StructureEndpoint: structure,
+		MonitorEndpoint:   monitor,
 	}
 }
 
@@ -121,6 +123,24 @@ func (c *Client) Report(ctx context.Context, p *ReportPayload) (res *ReportResul
 		return
 	}
 	o := ires.(*ReportResponseData)
+	return o.Result, o.Body, nil
+}
+
+// Structure calls the "structure" endpoint of the "aips" service.
+// Structure may return the following errors:
+//   - "not_found" (type *goa.ServiceError)
+//   - "not_valid" (type *goa.ServiceError)
+//   - "not_ready" (type *goa.ServiceError)
+//   - "unavailable" (type *goa.ServiceError)
+//   - "internal_error" (type *goa.ServiceError)
+//   - error: internal error
+func (c *Client) Structure(ctx context.Context, p *StructurePayload) (res *StructureResult, resp io.ReadCloser, err error) {
+	var ires any
+	ires, err = c.StructureEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	o := ires.(*StructureResponseData)
 	return o.Result, o.Body, nil
 }
 

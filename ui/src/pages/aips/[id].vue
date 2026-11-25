@@ -5,6 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import Download from "@/components/Download.vue";
 import ReportSection from "@/components/ReportSection.vue";
 import StatusBadge from "@/components/StatusBadge.vue";
+import StructureSection from "@/components/StructureSection.vue";
 import UUID from "@/components/UUID.vue";
 import { profileLabel } from "@/profiles";
 import { isActive, useAipsStore } from "@/stores/aips";
@@ -95,6 +96,7 @@ onBeforeUnmount(() => {
       <dd class="col-sm-9 mb-0"><Download :aip="store.detail" /></dd>
     </dl>
     <div v-if="store.detail.status === 'completed'">
+      <StructureSection :key="store.detail.uuid" :uuid="store.detail.uuid" />
       <ReportSection
         v-for="format in ['json', 'md'] as const"
         :key="`${store.detail.uuid}:${format}`"

@@ -39,6 +39,12 @@ type Service interface {
 	// Consider [goa.design/goa/v3/pkg.SkipResponseWriter] to adapt existing
 	// implementations.
 	Report(context.Context, *ReportPayload) (res *ReportResult, body io.ReadCloser, err error)
+	// Stream a stored package tree for a completed AIP.
+
+	// If body implements [io.WriterTo], that implementation will be used instead.
+	// Consider [goa.design/goa/v3/pkg.SkipResponseWriter] to adapt existing
+	// implementations.
+	Structure(context.Context, *StructurePayload) (res *StructureResult, body io.ReadCloser, err error)
 	// Monitor implements monitor.
 	Monitor(context.Context, MonitorServerStream) (err error)
 }
@@ -57,7 +63,7 @@ const ServiceName = "aips"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [6]string{"list", "show", "upload", "download", "report", "monitor"}
+var MethodNames = [7]string{"list", "show", "upload", "download", "report", "structure", "monitor"}
 
 // MonitorServerStream allows streaming instances of *AIPEvent to the client.
 type MonitorServerStream interface {
@@ -159,6 +165,19 @@ type ReportResult struct {
 type ShowPayload struct {
 	// Import request UUID
 	UUID string
+}
+
+// StructurePayload is the payload type of the aips service structure method.
+type StructurePayload struct {
+	// Import request UUID
+	UUID string
+	Kind string
+}
+
+// StructureResult is the result type of the aips service structure method.
+type StructureResult struct {
+	ContentType   string
+	ContentLength int64
 }
 
 // UploadPayload is the payload type of the aips service upload method.

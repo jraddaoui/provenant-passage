@@ -145,6 +145,27 @@ var _ = Service("aips", func() {
 			})
 		})
 	})
+	Method("structure", func() {
+		Description("Stream a stored package tree for a completed AIP.")
+		Payload(func() {
+			AttributeUUID("uuid", "Import request UUID")
+			Attribute("kind", String, func() { Enum("aip", "ocfl") })
+			Required("uuid", "kind")
+		})
+		Result(func() {
+			Attribute("content_type", String)
+			Attribute("content_length", Int64)
+			Required("content_type", "content_length")
+		})
+		HTTP(func() {
+			GET("/{uuid}/structures/{kind}")
+			SkipResponseBodyEncodeDecode()
+			Response(StatusOK, func() {
+				Header("content_type:Content-Type")
+				Header("content_length:Content-Length")
+			})
+		})
+	})
 	Method("monitor", func() {
 		StreamingResult(AIPEvent)
 		HTTP(func() { GET("/monitor"); ServerSentEvents(); Response(StatusOK) })

@@ -51,7 +51,11 @@ onBeforeUnmount(() => controller.abort());
 <template>
   <details class="report-section border rounded mb-3" @toggle="toggle">
     <summary class="p-3 fw-semibold">
-      {{ format === "json" ? "JSON report" : "Markdown report" }}
+      {{
+        format === "json"
+          ? "Import event record"
+          : "Content preservation report"
+      }}
     </summary>
     <div class="border-top p-3">
       <p v-if="loading" class="mb-0" role="status">Loading report...</p>
@@ -62,9 +66,15 @@ onBeforeUnmount(() => controller.abort());
         </button>
       </div>
       <template v-else-if="content !== null">
-        <pre v-if="format === 'json'" class="mb-0" tabindex="0">{{
-          content
-        }}</pre>
+        <template v-if="format === 'json'">
+          <p class="text-body-secondary">
+            This structured record describes the AIP-to-OCFL import: the source
+            archive and its checksum, the import time and outcome, and the
+            content checks. It lists which files were omitted by the selected
+            output option and whether any source content is unaccounted for.
+          </p>
+          <pre class="mb-0" tabindex="0">{{ content }}</pre>
+        </template>
         <!-- HTML is sanitized with DOMPurify after Markdown rendering. -->
         <!-- eslint-disable-next-line vue/no-v-html -->
         <div v-else class="report-markdown" v-html="html" />
