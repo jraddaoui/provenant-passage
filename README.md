@@ -26,16 +26,15 @@ port-forwards. Local acceptance verified context
 
 Obtain the independently maintained
 [provenant-import](https://opencommit.eu/provenant/provenant-import) source from
-the public project. Select an immutable source archive and its expected SHA-256,
-then provision it into this project's ignored cache:
+the public project. Provision the same immutable source archive used by CI into
+this project's ignored cache:
 
 ```sh
-export IMPORTER_ARCHIVE_URL='https://opencommit.eu/provenant/provenant-import/archive/<full-commit-id>.tar.gz'
-export IMPORTER_ARCHIVE_SHA256='<expected-64-character-sha256>'
+export IMPORTER_ARCHIVE_URL='https://opencommit.eu/api/v1/repos/provenant/provenant-import/archive/21d9649813ac18031eee965e98aa7a54cc7be348.tar.gz'
+export IMPORTER_ARCHIVE_SHA256='d2428d9cfd3cdfa7107461309c8884118dd69e3f47c120a4f31007fb63cd505c'
 python3 hack/provision-importer.py .cache/provenant-import
 ```
 
-Replace both placeholders with the selected revision and digest before running.
 The helper verifies the archive digest and refuses to replace an existing source
 directory. Make, Docker and Tilt default to `.cache/provenant-import`. To use an
 existing source directory elsewhere, export `IMPORTER_SOURCE` with its absolute
@@ -152,13 +151,15 @@ UI checks run with `npm run check` from `ui/`. Live integration tests use an adm
 `PASSAGE_TEST_MYSQL_DSN` with no database name (they create/drop an isolated test
 schema), and `PASSAGE_TEST_REDIS_URL` for distinct-instance event fan-out.
 
-GitHub Actions definitions are prepared locally. Before enabling them, a human
-must set repository variables `IMPORTER_ARCHIVE_URL` (HTTPS tar archive with one
-top-level source directory) and `IMPORTER_ARCHIVE_SHA256` to an approved immutable
-importer snapshot from the public project. CI verifies the digest, provisions the
-external CLI source in `.cache/provenant-import`, builds
-both images locally, checks generation/licensing, and enforces human DCO sign-off
-on main. No image publication is configured. CI has not been run remotely.
+GitHub Actions pins the importer archive URL and SHA-256 directly in
+[the build workflow](.github/workflows/ci.yml); no repository variables are needed.
+CI verifies the digest, provisions the external CLI source in
+`.cache/provenant-import`, builds both images locally, checks generation/licensing,
+and enforces human DCO sign-off on main. To change the importer revision, update
+the workflow and local setup values together after verifying the new archive and
+reviewing its source changes against [the source inventory](docs/importer-source-sha256.json).
+No image publication is configured. See [local evidence](docs/acceptance.md) for
+validation results and remote CI status.
 
 ## Scope and limitations
 

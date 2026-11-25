@@ -155,9 +155,9 @@ reconciliation to see fixture rows. It now requires an admin DSN without a schem
 creates/drops an isolated temporary schema and passed again. Live reset removed
 the original stray fixture data. This was test isolation, not production evidence.
 
-GitHub Actions definitions are prepared but have not run remotely. A human must
-supply the digest-pinned importer archive variables before enabling CI, review
-origin/licensing and provide any DCO sign-off. This task claims no human sign-off.
+The initial local acceptance did not run GitHub Actions. The later reported CI
+failure and local provisioning fix are recorded below. A human still reviews
+origin/licensing and provides any DCO sign-off. This task claims no human sign-off.
 
 ## Deployment side effect
 
@@ -207,3 +207,27 @@ with a stub executable for both default and explicit paths (including spaces),
 matching Tilt/CI defaults, and all 32 local links across eight Markdown files.
 REUSE 6.2.0 passed for 224 source files. No application build, browser acceptance
 or remote CI was rerun for this documentation/configuration change.
+
+## CI importer provisioning
+
+On 2026-11-25, the user reported that GitHub Actions failed at importer
+provisioning because both repository variables were empty. The build workflow
+now carries the archive URL and SHA-256 directly, removing that manual setup
+dependency. Local setup instructions use the same values. This supersedes the
+initial requirement to configure repository variables before enabling CI.
+
+The public forge's web archive URL returned HTTP 404; its API archive endpoint
+worked for revision `21d9649813ac18031eee965e98aa7a54cc7be348`. The downloaded
+archive SHA-256 is
+`d2428d9cfd3cdfa7107461309c8884118dd69e3f47c120a4f31007fb63cd505c`.
+All 39 files match `importer-source-sha256.json`, so this changes provisioning
+without changing the previously tested importer source.
+
+Reproduced locally: a real HTTPS download through `hack/provision-importer.py`
+with the workflow's pinned values, exact extracted-source inventory equality,
+digest-mismatch rejection using the cached archive, existing-directory
+protection, workflow YAML parsing and matching README values. REUSE 6.2.0 passed
+for 228 source files. Evidence: `docs/evidence/local/ci-importer/result.json`.
+No application code changed; backend/UI suites and browser acceptance were not
+repeated. The corrected workflow still needs a human commit/push and remote CI
+run; no remote pass is claimed.

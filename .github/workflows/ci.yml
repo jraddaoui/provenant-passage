@@ -41,8 +41,9 @@ jobs:
           cache-dependency-path: ui/package-lock.json
       - name: Provision the independently maintained importer
         env:
-          IMPORTER_ARCHIVE_URL: ${{ vars.IMPORTER_ARCHIVE_URL }}
-          IMPORTER_ARCHIVE_SHA256: ${{ vars.IMPORTER_ARCHIVE_SHA256 }}
+          # Matches the source inventory in docs/importer-source-sha256.json.
+          IMPORTER_ARCHIVE_URL: https://opencommit.eu/api/v1/repos/provenant/provenant-import/archive/21d9649813ac18031eee965e98aa7a54cc7be348.tar.gz
+          IMPORTER_ARCHIVE_SHA256: d2428d9cfd3cdfa7107461309c8884118dd69e3f47c120a4f31007fb63cd505c
         run: python3 hack/provision-importer.py .cache/provenant-import
       - run: make tools build lint test-race vet workflowcheck
       - name: Regenerate and compare file hashes without Git

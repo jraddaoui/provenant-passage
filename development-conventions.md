@@ -21,11 +21,12 @@ These conventions apply to human and agent development in this repository.
   the [README](README.md#development-checks). Use focused checks for documentation
   and configuration changes; a document-only edit needs no build or demo run.
 - Keep local results and remote CI results distinct. The GitHub Actions
-  definitions in [.github/workflows](.github/workflows) are prepared locally;
-  they have not yet run remotely. A local pass does not satisfy the CI gate.
-- A human configures the digest-pinned importer variables before enabling CI.
-  Once enabled, the applicable checks must pass before a human merges a change.
-  Do not publish or create commits merely to trigger CI.
+  definitions are in [.github/workflows](.github/workflows). A local pass does
+  not satisfy the CI gate; record reported remote failures separately.
+- Keep the importer archive URL and SHA-256 pinned in the build workflow and
+  local setup instructions. Review source changes when updating this dependency.
+  The applicable checks must pass before a human merges a change. Do not publish
+  or create commits merely to trigger CI.
 - Record unavailable required checks as gaps. Use the project's
   [acceptance criteria](docs/acceptance-criteria.md) for integration changes and
   retain reproduced results in [local evidence](docs/acceptance.md).
