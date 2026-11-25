@@ -32,6 +32,11 @@ func DownloadAipsPath(uuid string) string {
 	return fmt.Sprintf("/aips/%v/download", uuid)
 }
 
+// ReportAipsPath returns the URL path to the aips service report HTTP endpoint.
+func ReportAipsPath(uuid string, format string) string {
+	return fmt.Sprintf("/aips/%v/reports/%v", uuid, format)
+}
+
 // MonitorAipsPath returns the URL path to the aips service monitor HTTP endpoint.
 func MonitorAipsPath() string {
 	return "/aips/monitor"

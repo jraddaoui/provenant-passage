@@ -24,6 +24,12 @@ reproduced results and gaps separately from these requirements.
 - Download a ZIP containing one `object/` directory with the unchanged OCFL
   object. Store `import-event.json` and `import-report.md` separately in the
   output bucket.
+- For completed AIPs, show two initially collapsed report sections below the
+  details. Load each report on expansion through
+  `GET /aips/{uuid}/reports/{format}` (`json` or `md`), streaming the stored bytes
+  through the API without exposing bucket access. Render sanitized Markdown and
+  literal JSON in a `pre` element. Show loading/errors and allow retry. Unknown
+  AIPs or missing reports return 404; incomplete imports return 409.
 
 | Application profile | CLI profile |
 | --- | --- |

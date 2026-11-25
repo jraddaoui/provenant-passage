@@ -24,7 +24,7 @@ import (
 //	command (subcommand1|subcommand2|...)
 func UsageCommands() []string {
 	return []string{
-		"aips (list|show|upload|download|monitor)",
+		"aips (list|show|upload|download|report|monitor)",
 	}
 }
 
@@ -61,6 +61,10 @@ func ParseEndpoint(
 		aipsDownloadFlags    = flag.NewFlagSet("download", flag.ExitOnError)
 		aipsDownloadUUIDFlag = aipsDownloadFlags.String("uuid", "REQUIRED", "Import request UUID")
 
+		aipsReportFlags      = flag.NewFlagSet("report", flag.ExitOnError)
+		aipsReportUUIDFlag   = aipsReportFlags.String("uuid", "REQUIRED", "Import request UUID")
+		aipsReportFormatFlag = aipsReportFlags.String("format", "REQUIRED", "")
+
 		aipsMonitorFlags = flag.NewFlagSet("monitor", flag.ExitOnError)
 	)
 	aipsFlags.Usage = aipsUsage
@@ -68,6 +72,7 @@ func ParseEndpoint(
 	aipsShowFlags.Usage = aipsShowUsage
 	aipsUploadFlags.Usage = aipsUploadUsage
 	aipsDownloadFlags.Usage = aipsDownloadUsage
+	aipsReportFlags.Usage = aipsReportUsage
 	aipsMonitorFlags.Usage = aipsMonitorUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
@@ -116,6 +121,9 @@ func ParseEndpoint(
 			case "download":
 				epf = aipsDownloadFlags
 
+			case "report":
+				epf = aipsReportFlags
+
 			case "monitor":
 				epf = aipsMonitorFlags
 
@@ -159,6 +167,9 @@ func ParseEndpoint(
 			case "download":
 				endpoint = c.Download()
 				data, err = aipsc.BuildDownloadPayload(*aipsDownloadUUIDFlag)
+			case "report":
+				endpoint = c.Report()
+				data, err = aipsc.BuildReportPayload(*aipsReportUUIDFlag, *aipsReportFormatFlag)
 			case "monitor":
 				endpoint = c.Monitor()
 			}
@@ -180,6 +191,7 @@ func aipsUsage() {
 	fmt.Fprintln(os.Stderr, `    show: Show implements show.`)
 	fmt.Fprintln(os.Stderr, `    upload: Upload implements upload.`)
 	fmt.Fprintln(os.Stderr, `    download: Download implements download.`)
+	fmt.Fprintln(os.Stderr, `    report: Stream an import report from the output bucket for a completed AIP.`)
 	fmt.Fprintln(os.Stderr, `    monitor: Monitor implements monitor.`)
 	fmt.Fprintln(os.Stderr)
 	fmt.Fprintln(os.Stderr, "Additional help:")
@@ -261,6 +273,26 @@ func aipsDownloadUsage() {
 	fmt.Fprintln(os.Stderr)
 	fmt.Fprintln(os.Stderr, "Example:")
 	fmt.Fprintf(os.Stderr, "    %s %s\n", os.Args[0], "aips download --uuid \"d1845cb6-a5ea-474a-9ab8-26f9bcd919f5\"")
+}
+
+func aipsReportUsage() {
+	// Header with flags
+	fmt.Fprintf(os.Stderr, "%s [flags] aips report", os.Args[0])
+	fmt.Fprint(os.Stderr, " -uuid STRING")
+	fmt.Fprint(os.Stderr, " -format STRING")
+	fmt.Fprintln(os.Stderr)
+
+	// Description
+	fmt.Fprintln(os.Stderr)
+	fmt.Fprintln(os.Stderr, `Stream an import report from the output bucket for a completed AIP.`)
+
+	// Flags list
+	fmt.Fprintln(os.Stderr, `    -uuid STRING: Import request UUID`)
+	fmt.Fprintln(os.Stderr, `    -format STRING: `)
+
+	fmt.Fprintln(os.Stderr)
+	fmt.Fprintln(os.Stderr, "Example:")
+	fmt.Fprintf(os.Stderr, "    %s %s\n", os.Args[0], "aips report --uuid \"d1845cb6-a5ea-474a-9ab8-26f9bcd919f5\" --format \"md\"")
 }
 
 func aipsMonitorUsage() {

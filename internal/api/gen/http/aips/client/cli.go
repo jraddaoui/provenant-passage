@@ -113,3 +113,32 @@ func BuildDownloadPayload(aipsDownloadUUID string) (*aips.DownloadPayload, error
 
 	return v, nil
 }
+
+// BuildReportPayload builds the payload for the aips report endpoint from CLI
+// flags.
+func BuildReportPayload(aipsReportUUID string, aipsReportFormat string) (*aips.ReportPayload, error) {
+	var err error
+	var uuid string
+	{
+		uuid = aipsReportUUID
+		err = goa.MergeErrors(err, goa.ValidateFormat("uuid", uuid, goa.FormatUUID))
+		if err != nil {
+			return nil, err
+		}
+	}
+	var format string
+	{
+		format = aipsReportFormat
+		if !(format == "json" || format == "md") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("format", format, []any{"json", "md"}))
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+	v := &aips.ReportPayload{}
+	v.UUID = uuid
+	v.Format = format
+
+	return v, nil
+}

@@ -34,6 +34,9 @@ type Client struct {
 	// endpoint.
 	DownloadDoer goahttp.Doer
 
+	// Report Doer is the HTTP client used to make requests to the report endpoint.
+	ReportDoer goahttp.Doer
+
 	// Monitor Doer is the HTTP client used to make requests to the monitor
 	// endpoint.
 	MonitorDoer goahttp.Doer
@@ -62,6 +65,7 @@ func NewClient(
 		ShowDoer:            doer,
 		UploadDoer:          doer,
 		DownloadDoer:        doer,
+		ReportDoer:          doer,
 		MonitorDoer:         doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
@@ -159,6 +163,30 @@ func (c *Client) Download() goa.Endpoint {
 			return nil, err
 		}
 		return &aips.DownloadResponseData{Result: res.(*aips.DownloadResult), Body: resp.Body}, nil
+	}
+}
+
+// Report returns an endpoint that makes HTTP requests to the aips service
+// report server.
+func (c *Client) Report() goa.Endpoint {
+	var (
+		decodeResponse = DecodeReportResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v any) (any, error) {
+		req, err := c.BuildReportRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.ReportDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("aips", "report", err)
+		}
+		res, err := decodeResponse(resp)
+		if err != nil {
+			resp.Body.Close()
+			return nil, err
+		}
+		return &aips.ReportResponseData{Result: res.(*aips.ReportResult), Body: resp.Body}, nil
 	}
 }
 

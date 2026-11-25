@@ -515,6 +515,130 @@ func EncodeDownloadError(encoder func(context.Context, http.ResponseWriter) goah
 	}
 }
 
+// EncodeReportResponse returns an encoder for responses returned by the aips
+// report endpoint.
+func EncodeReportResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, any) error {
+	return func(ctx context.Context, w http.ResponseWriter, v any) error {
+		res, _ := v.(*aips.ReportResult)
+		w.Header().Set("Content-Type", res.ContentType)
+		{
+			val := res.ContentLength
+			contentLengths := strconv.FormatInt(val, 10)
+			w.Header().Set("Content-Length", contentLengths)
+		}
+		w.WriteHeader(http.StatusOK)
+		return nil
+	}
+}
+
+// DecodeReportRequest returns a decoder for requests sent to the aips report
+// endpoint.
+func DecodeReportRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (*aips.ReportPayload, error) {
+	return func(r *http.Request) (*aips.ReportPayload, error) {
+		var payload *aips.ReportPayload
+		var (
+			uuid   string
+			format string
+			err    error
+
+			params = mux.Vars(r)
+		)
+		uuid = params["uuid"]
+		err = goa.MergeErrors(err, goa.ValidateFormat("uuid", uuid, goa.FormatUUID))
+		format = params["format"]
+		if !(format == "json" || format == "md") {
+			err = goa.MergeErrors(err, goa.InvalidEnumValueError("format", format, []any{"json", "md"}))
+		}
+		if err != nil {
+			return payload, err
+		}
+		payload = NewReportPayload(uuid, format)
+
+		return payload, nil
+	}
+}
+
+// EncodeReportError returns an encoder for errors returned by the report aips
+// endpoint.
+func EncodeReportError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(ctx context.Context, err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		var en goa.GoaErrorNamer
+		if !errors.As(v, &en) {
+			return encodeError(ctx, w, v)
+		}
+		switch en.GoaErrorName() {
+		case "not_found":
+			var res *goa.ServiceError
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body any
+			if formatter != nil {
+				body = formatter(ctx, res)
+			} else {
+				body = NewReportNotFoundResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.GoaErrorName())
+			w.WriteHeader(http.StatusNotFound)
+			return enc.Encode(body)
+		case "not_valid":
+			var res *goa.ServiceError
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body any
+			if formatter != nil {
+				body = formatter(ctx, res)
+			} else {
+				body = NewReportNotValidResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.GoaErrorName())
+			w.WriteHeader(http.StatusBadRequest)
+			return enc.Encode(body)
+		case "not_ready":
+			var res *goa.ServiceError
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body any
+			if formatter != nil {
+				body = formatter(ctx, res)
+			} else {
+				body = NewReportNotReadyResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.GoaErrorName())
+			w.WriteHeader(http.StatusConflict)
+			return enc.Encode(body)
+		case "unavailable":
+			var res *goa.ServiceError
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body any
+			if formatter != nil {
+				body = formatter(ctx, res)
+			} else {
+				body = NewReportUnavailableResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.GoaErrorName())
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return enc.Encode(body)
+		case "internal_error":
+			var res *goa.ServiceError
+			errors.As(v, &res)
+			enc := encoder(ctx, w)
+			var body any
+			if formatter != nil {
+				body = formatter(ctx, res)
+			} else {
+				body = NewReportInternalErrorResponseBody(res)
+			}
+			w.Header().Set("goa-error", res.GoaErrorName())
+			w.WriteHeader(http.StatusInternalServerError)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
+
 // EncodeMonitorResponse returns an encoder for responses returned by the aips
 // monitor endpoint.
 func EncodeMonitorResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, any) error {

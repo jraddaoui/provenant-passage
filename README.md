@@ -91,8 +91,11 @@ archive. All options receive OCFL inventories and checksums.
 Click Uppy's upload button. The chosen option stays fixed for retries. The AIPs
 page shows queued, processing, completed, error or canceled requests, newest
 first. Open an AIP for details. A completed import offers **Download ZIP**,
-containing one `object/` directory with the unchanged OCFL object. Reports are
-stored separately in the output bucket. An error or cancellation has no download.
+containing one `object/` directory with the unchanged OCFL object. Below the
+details, expand **JSON report** or **Markdown report** to view the separately
+stored reports. Each section loads through the API on first expansion; JSON is
+shown as preformatted text and Markdown is rendered with sanitized HTML.
+An error or cancellation has no download or report sections.
 If an upload response is interrupted, check the AIPs list before manually retrying;
 the server may already have accepted it.
 

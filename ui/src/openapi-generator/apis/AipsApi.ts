@@ -43,6 +43,11 @@ export interface AipsListRequest {
     offset?: number;
 }
 
+export interface AipsReportRequest {
+    uuid: string;
+    format: AipsReportFormatEnum;
+}
+
 export interface AipsShowRequest {
     uuid: string;
 }
@@ -127,6 +132,32 @@ export interface AipsApiInterface {
      * monitor aips
      */
     aipsMonitor(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AIPEvent>;
+
+    /**
+     * Creates request options for aipsReport without sending the request
+     * @param {string} uuid Import request UUID
+     * @param {'json' | 'md'} format 
+     * @throws {RequiredError}
+     * @memberof AipsApiInterface
+     */
+    aipsReportRequestOpts(requestParameters: AipsReportRequest): Promise<runtime.RequestOpts>;
+
+    /**
+     * Stream an import report from the output bucket for a completed AIP.
+     * @summary report aips
+     * @param {string} uuid Import request UUID
+     * @param {'json' | 'md'} format 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AipsApiInterface
+     */
+    aipsReportRaw(requestParameters: AipsReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>>;
+
+    /**
+     * Stream an import report from the output bucket for a completed AIP.
+     * report aips
+     */
+    aipsReport(requestParameters: AipsReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob>;
 
     /**
      * Creates request options for aipsShow without sending the request
@@ -311,6 +342,61 @@ export class AipsApi extends runtime.BaseAPI implements AipsApiInterface {
     }
 
     /**
+     * Creates request options for aipsReport without sending the request
+     */
+    async aipsReportRequestOpts(requestParameters: AipsReportRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['uuid'] == null) {
+            throw new runtime.RequiredError(
+                'uuid',
+                'Required parameter "uuid" was null or undefined when calling aipsReport().'
+            );
+        }
+
+        if (requestParameters['format'] == null) {
+            throw new runtime.RequiredError(
+                'format',
+                'Required parameter "format" was null or undefined when calling aipsReport().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+
+        let urlPath = `/aips/{uuid}/reports/{format}`;
+        urlPath = urlPath.replace('{uuid}', encodeURIComponent(String(requestParameters['uuid'])));
+        urlPath = urlPath.replace('{format}', encodeURIComponent(String(requestParameters['format'])));
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Stream an import report from the output bucket for a completed AIP.
+     * report aips
+     */
+    async aipsReportRaw(requestParameters: AipsReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>> {
+        const requestOptions = await this.aipsReportRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.BlobApiResponse(response);
+    }
+
+    /**
+     * Stream an import report from the output bucket for a completed AIP.
+     * report aips
+     */
+    async aipsReport(requestParameters: AipsReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob> {
+        const response = await this.aipsReportRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Creates request options for aipsShow without sending the request
      */
     async aipsShowRequestOpts(requestParameters: AipsShowRequest): Promise<runtime.RequestOpts> {
@@ -409,6 +495,14 @@ export class AipsApi extends runtime.BaseAPI implements AipsApiInterface {
 
 }
 
+/**
+ * @export
+ */
+export const AipsReportFormatEnum = {
+    Json: 'json',
+    Md: 'md'
+} as const;
+export type AipsReportFormatEnum = typeof AipsReportFormatEnum[keyof typeof AipsReportFormatEnum];
 /**
  * @export
  */

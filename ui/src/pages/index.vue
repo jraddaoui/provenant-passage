@@ -42,7 +42,6 @@ useLayoutStore().updateBreadcrumb([]);
 </template>
 <style scoped>
 .home {
-  max-width: 760px;
   padding-top: 1rem;
 }
 .hero-logo {

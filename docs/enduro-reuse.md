@@ -36,6 +36,9 @@ profile for retries. The Pinia store keeps paging and fetching behavior; request
 sequence numbers prevent stale responses overwriting a newer page. Monitor events
 invalidate database reads, with reconnect refresh and five-second active polling.
 The UI uses an original SVG logo and a teal theme.
+The header places breadcrumbs immediately after the brand, with the theme
+control at the right. Home, upload, AIP details and reports use the shared content
+width; the details grid removes Bootstrap's negative outer row margins.
 
 Nginx/Vite proxy all API routes without request/response buffering or a body-size
 ceiling. Runtime injection retains the distribution-copy approach but only accepts

@@ -124,6 +124,27 @@ var _ = Service("aips", func() {
 			})
 		})
 	})
+	Method("report", func() {
+		Description("Stream an import report from the output bucket for a completed AIP.")
+		Payload(func() {
+			AttributeUUID("uuid", "Import request UUID")
+			Attribute("format", String, func() { Enum("json", "md") })
+			Required("uuid", "format")
+		})
+		Result(func() {
+			Attribute("content_type", String)
+			Attribute("content_length", Int64)
+			Required("content_type", "content_length")
+		})
+		HTTP(func() {
+			GET("/{uuid}/reports/{format}")
+			SkipResponseBodyEncodeDecode()
+			Response(StatusOK, func() {
+				Header("content_type:Content-Type")
+				Header("content_length:Content-Length")
+			})
+		})
+	})
 	Method("monitor", func() {
 		StreamingResult(AIPEvent)
 		HTTP(func() { GET("/monitor"); ServerSentEvents(); Response(StatusOK) })

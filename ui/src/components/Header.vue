@@ -33,13 +33,13 @@ const layout = useLayoutStore();
       </button>
       <RouterLink
         to="/"
-        class="navbar-brand m-0 me-auto d-flex align-items-center gap-2 fw-semibold text-primary"
+        class="navbar-brand m-0 d-flex align-items-center gap-2 fw-semibold text-primary flex-shrink-0"
         ><Logo /><span>Provenant Passage</span></RouterLink
       >
-      <div class="ms-4 me-auto d-none d-lg-block overflow-hidden">
+      <div class="ms-4 flex-grow-1 min-w-0 d-none d-lg-block overflow-hidden">
         <Breadcrumb />
       </div>
-      <ThemeToggle compact class="mx-2" />
+      <ThemeToggle compact class="ms-auto me-2 flex-shrink-0" />
     </nav>
   </header>
 </template>

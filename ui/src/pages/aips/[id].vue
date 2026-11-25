@@ -3,6 +3,7 @@ import { onBeforeUnmount, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import Download from "@/components/Download.vue";
+import ReportSection from "@/components/ReportSection.vue";
 import StatusBadge from "@/components/StatusBadge.vue";
 import UUID from "@/components/UUID.vue";
 import { profileLabel } from "@/profiles";
@@ -75,7 +76,7 @@ onBeforeUnmount(() => {
     <div v-else class="alert alert-success" role="status">
       Import completed. Your OCFL object is ready to download.
     </div>
-    <dl class="row border rounded p-4 mt-4" style="max-width: 950px">
+    <dl class="row border rounded p-4 mt-4 mx-0">
       <dt class="col-sm-3 mb-2">Name</dt>
       <dd class="col-sm-9">{{ store.detail.name }}</dd>
       <dt class="col-sm-3 mb-2">UUID</dt>
@@ -93,5 +94,13 @@ onBeforeUnmount(() => {
       <dt class="col-sm-3 mb-0">Download</dt>
       <dd class="col-sm-9 mb-0"><Download :aip="store.detail" /></dd>
     </dl>
+    <div v-if="store.detail.status === 'completed'">
+      <ReportSection
+        v-for="format in ['json', 'md'] as const"
+        :key="`${store.detail.uuid}:${format}`"
+        :uuid="store.detail.uuid"
+        :format="format"
+      />
+    </div>
   </template>
 </template>

@@ -21,16 +21,18 @@ type Client struct {
 	ShowEndpoint     goa.Endpoint
 	UploadEndpoint   goa.Endpoint
 	DownloadEndpoint goa.Endpoint
+	ReportEndpoint   goa.Endpoint
 	MonitorEndpoint  goa.Endpoint
 }
 
 // NewClient initializes a "aips" service client given the endpoints.
-func NewClient(list, show, upload, download, monitor goa.Endpoint) *Client {
+func NewClient(list, show, upload, download, report, monitor goa.Endpoint) *Client {
 	return &Client{
 		ListEndpoint:     list,
 		ShowEndpoint:     show,
 		UploadEndpoint:   upload,
 		DownloadEndpoint: download,
+		ReportEndpoint:   report,
 		MonitorEndpoint:  monitor,
 	}
 }
@@ -101,6 +103,24 @@ func (c *Client) Download(ctx context.Context, p *DownloadPayload) (res *Downloa
 		return
 	}
 	o := ires.(*DownloadResponseData)
+	return o.Result, o.Body, nil
+}
+
+// Report calls the "report" endpoint of the "aips" service.
+// Report may return the following errors:
+//   - "not_found" (type *goa.ServiceError)
+//   - "not_valid" (type *goa.ServiceError)
+//   - "not_ready" (type *goa.ServiceError)
+//   - "unavailable" (type *goa.ServiceError)
+//   - "internal_error" (type *goa.ServiceError)
+//   - error: internal error
+func (c *Client) Report(ctx context.Context, p *ReportPayload) (res *ReportResult, resp io.ReadCloser, err error) {
+	var ires any
+	ires, err = c.ReportEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	o := ires.(*ReportResponseData)
 	return o.Result, o.Body, nil
 }
 

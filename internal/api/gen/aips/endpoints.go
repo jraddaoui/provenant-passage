@@ -21,6 +21,7 @@ type Endpoints struct {
 	Show     goa.Endpoint
 	Upload   goa.Endpoint
 	Download goa.Endpoint
+	Report   goa.Endpoint
 	Monitor  goa.Endpoint
 }
 
@@ -42,6 +43,15 @@ type DownloadResponseData struct {
 	Body io.ReadCloser
 }
 
+// ReportResponseData holds both the result and the HTTP response body reader
+// of the "report" method.
+type ReportResponseData struct {
+	// Result is the method result.
+	Result *ReportResult
+	// Body streams the HTTP response body.
+	Body io.ReadCloser
+}
+
 // MonitorEndpointInput holds both the payload and the server stream of the
 // "monitor" method.
 type MonitorEndpointInput struct {
@@ -56,6 +66,7 @@ func NewEndpoints(s Service) *Endpoints {
 		Show:     NewShowEndpoint(s),
 		Upload:   NewUploadEndpoint(s),
 		Download: NewDownloadEndpoint(s),
+		Report:   NewReportEndpoint(s),
 		Monitor:  NewMonitorEndpoint(s),
 	}
 }
@@ -66,6 +77,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.Show = m(e.Show)
 	e.Upload = m(e.Upload)
 	e.Download = m(e.Download)
+	e.Report = m(e.Report)
 	e.Monitor = m(e.Monitor)
 }
 
@@ -111,6 +123,19 @@ func NewDownloadEndpoint(s Service) goa.Endpoint {
 			return nil, err
 		}
 		return &DownloadResponseData{Result: res, Body: body}, nil
+	}
+}
+
+// NewReportEndpoint returns an endpoint function that calls the method
+// "report" of service "aips".
+func NewReportEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req any) (any, error) {
+		p := req.(*ReportPayload)
+		res, body, err := s.Report(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+		return &ReportResponseData{Result: res, Body: body}, nil
 	}
 }
 

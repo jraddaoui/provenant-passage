@@ -6,8 +6,8 @@
 The [acceptance criteria](acceptance-criteria.md) define the project contract.
 
 Reproduced 2026-11-25 in the user-provided local cluster. These results concern
-Passage, not the importer's earlier research experiments. No Git operations,
-commits, remote CI execution or publication were performed. Source projects were
+Passage, not the importer's earlier research experiments. No commits,
+remote CI execution or publication were performed. Source projects were
 read-only. Build images went only to the existing local k3d registry.
 
 ## Inputs and verification policy
@@ -25,6 +25,48 @@ The local and deployed importer executable SHA-256 is
 Final fingerprints matched all 39 importer source files and 52 Enduro reference
 entries. Canonical Apache/CC-BY/DCO files match Provenant byte for byte.
 See `docs/evidence/local/final-source-check.json` and the source inventories.
+
+## Report viewing
+
+Added 2026-11-25 with OpenAI Codex assistance: completed AIP details include
+collapsed JSON and Markdown sections. `GET /aips/{uuid}/reports/{format}` accepts
+only `json` or `md`, streams the fixed output-bucket report key, and closes the
+reader. It returns 404 for missing AIPs/blobs and 409 for incomplete imports.
+It uses the same access boundary as the existing AIP API; authentication remains
+outside this local prototype. The browser loads each report on first expansion,
+retains it for reopening, and cancels pending requests when leaving the AIP.
+
+Markdown uses Marked 18.3.0 followed by DOMPurify 3.5.0 sanitization; JSON is
+literal preformatted text. This follows [Marked's sanitization guidance](https://marked.js.org/#usage)
+and [DOMPurify's HTML profile](https://github.com/cure53/DOMPurify#can-i-configure-dompurify).
+The importer, stored report bytes and report schema are unchanged.
+
+Reproduced locally: both formats through the HTTP transport, invalid formats
+and UUIDs, incomplete imports, missing objects, storage failures, exact bytes,
+headers and reader closure. All 35 UI tests pass, including lazy loading, cached
+reopening, rendered headings/tables, unsafe HTML removal, missing-report retry
+and request cancellation. Formatter/linter, backend tests/race tests,
+workflowcheck, UI type checks/build, generation/module hygiene (67 unchanged
+files) and REUSE (228 source files) passed. Both local Tilt images rebuilt.
+
+The existing completed CSVmultiLevel AIP
+`00f5c57b-553d-46f0-a8e7-53f2d80d5bcd` passed live report viewing: no report request
+before expansion, one same-origin API request per format, JSON byte equality to
+the API response, rendered Markdown tables, light/dark themes and 390px layout
+without page overflow. Evidence and screenshots are
+`docs/evidence/local/browser/reports-result.json` and `reports-*.png` beside it.
+The first theme check assumed the initial theme incorrectly; the browser script
+now explicitly selects a theme before assertions. Full import/CLI parity was
+not rerun for this presentation-only change; remote CI remains unrun.
+
+Layout follow-up: home, upload, AIP details and reports now fill the shared
+content width. Breadcrumbs sit immediately after the brand; removing the detail
+grid's negative row margins aligns its border with the surrounding content.
+`npm run check` and REUSE passed. Browser measurements passed for all four pages
+at 1440px, 1024px and 390px without horizontal page overflow. Screenshots and
+measurements are `docs/evidence/local/browser/layout-*.png` and
+`layout-result.json`. Browser checks disable cache to avoid reusing pre-rebuild
+page assets. The local UI image was rebuilt; backend behavior was unchanged.
 
 ## Browser and exact CLI comparison
 
