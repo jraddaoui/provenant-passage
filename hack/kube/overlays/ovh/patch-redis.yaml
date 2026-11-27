@@ -1,0 +1,41 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: redis
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+        command:
+        - redis-server
+        - /etc/redis/redis.conf
+        env:
+        - name: REDISCLI_AUTH
+          valueFrom:
+            secretKeyRef:
+              name: redis-secret
+              key: password
+        volumeMounts:
+        - name: redis-config
+          mountPath: /etc/redis
+          readOnly: true
+      volumes:
+      - name: redis-config
+        secret:
+          secretName: redis-secret
+          items:
+          - key: redis.conf
+            path: redis.conf

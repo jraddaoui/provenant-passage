@@ -30,6 +30,7 @@ RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache
     sh /collect-go-notices.sh /notices
 
 FROM debian:13-slim AS provenant-server
+LABEL org.opencontainers.image.source="https://github.com/jraddaoui/provenant-passage"
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && \
     groupadd --gid 1000 provenant && useradd --uid 1000 --gid 1000 -m provenant
 COPY --from=build-server /out/ /usr/local/bin/

@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: temporal-frontend
+spec:
+  template:
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: temporal-frontend
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: '1'
+            memory: 1Gi

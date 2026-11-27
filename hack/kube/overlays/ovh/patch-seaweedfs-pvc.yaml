@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: seaweedfs-pvc
+spec:
+  storageClassName: provenant-retain
+  resources:
+    requests:
+      storage: 50Gi

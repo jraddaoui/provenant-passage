@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: provenant-server
+spec:
+  template:
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: provenant-server
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+            ephemeral-storage: 2Gi
+          limits:
+            cpu: '2'
+            memory: 4Gi
+            ephemeral-storage: 25Gi
+        env:
+        - name: PROVENANT_DATABASE_DSN
+          valueFrom:
+            secretKeyRef:
+              name: provenant-runtime
+              key: PROVENANT_DATABASE_DSN
+        - name: PROVENANT_EVENT_REDISADDRESS
+          valueFrom:
+            secretKeyRef:
+              name: provenant-runtime
+              key: PROVENANT_EVENT_REDISADDRESS
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: config
+        secret: null
+        configMap:
+          name: provenant-config
+      - name: scratch
+        emptyDir:
+          sizeLimit: 20Gi

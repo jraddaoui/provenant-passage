@@ -11,8 +11,9 @@ RUN npm run build && node hack/collect-notices.mjs
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "80"]
 
 FROM nginx:alpine AS provenant-ui
+LABEL org.opencontainers.image.source="https://github.com/jraddaoui/provenant-passage"
 RUN apk add --no-cache bash
-ENV PROVENANT_UI_DIST=/dist PROVENANT_UI_ROOT=/usr/share/nginx/html
+ENV PROVENANT_UI_DIST=/dist PROVENANT_UI_ROOT=/usr/share/nginx/html PROVENANT_MAX_UPLOAD_SIZE=0
 COPY --from=builder --link /app/dist /dist
 COPY hack/default.conf.template /etc/nginx/templates/default.conf.template
 COPY hack/inject-vite-envs.sh /docker-entrypoint.d/50-inject-vite-envs.sh

@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: temporal-history
+spec:
+  template:
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: temporal-history
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            cpu: '1'
+            memory: 1536Mi

@@ -4,6 +4,10 @@
 /.cache/
 /provenant.local.toml
 /.tilt.env
+/.secrets/
+/secrets/
+*.kubeconfig
+/ui/.env.local
 /ui/node_modules/
 /ui/dist/
 /coverage/

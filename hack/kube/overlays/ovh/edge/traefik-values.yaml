@@ -1,0 +1,69 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+fullnameOverride: passage-edge
+deployment:
+  replicas: 1
+ingressClass:
+  name: passage-edge
+  isDefaultClass: false
+providers:
+  kubernetesCRD:
+    enabled: true
+    ingressClass: passage-edge
+    namespaces: [provenant, passage-edge]
+    defaultTLSResourcesNamespace: passage-edge
+    allowCrossNamespace: false
+  kubernetesIngress:
+    enabled: true
+    ingressClass: passage-edge
+    namespaces: [passage-edge]
+  kubernetesGateway:
+    enabled: false
+gateway:
+  enabled: false
+ingressRoute:
+  dashboard:
+    enabled: false
+service:
+  spec:
+    type: LoadBalancer
+    externalTrafficPolicy: Cluster
+  annotations:
+    loadbalancer.ovhcloud.com/class: octavia
+    loadbalancer.ovhcloud.com/flavor: small
+    loadbalancer.openstack.org/timeout-client-data: "3600000"
+    loadbalancer.openstack.org/timeout-member-data: "3600000"
+ports:
+  web:
+    port: 8000
+    exposedPort: 80
+    asDefault: true
+    # HTTP is reserved for ACME challenges. No application router uses this port.
+  websecure:
+    port: 8443
+    exposedPort: 443
+    asDefault: false
+    transport:
+      respondingTimeouts:
+        readTimeout: 3600s
+        writeTimeout: 0s
+        idleTimeout: 3600s
+  temporal:
+    port: 8444
+    exposedPort: 8443
+    expose:
+      default: true
+    protocol: TCP
+    asDefault: false
+  seaweedfs:
+    port: 9443
+    exposedPort: 9443
+    expose:
+      default: true
+    protocol: TCP
+    asDefault: false
+resources:
+  requests: {cpu: 100m, memory: 128Mi}
+  limits: {cpu: "1", memory: 512Mi}
+accessLog:
+  enabled: false

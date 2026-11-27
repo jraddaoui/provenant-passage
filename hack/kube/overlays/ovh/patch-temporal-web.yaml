@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: temporal-web
+spec:
+  template:
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: temporal-web
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi

@@ -41,7 +41,7 @@ configuration = encode_yaml({
     "metadata": {"name": "provenant-config", "namespace": "provenant"},
     "type": "Opaque", "stringData": {"provenant.toml": str(read_file(config_path))},
 })
-k8s_yaml([kustomize("hack/kube/base"), configuration])
+k8s_yaml([kustomize("hack/kube/overlays/local"), configuration])
 
 trigger = TRIGGER_MODE_AUTO if os.environ.get("TRIGGER_MODE_AUTO", "").lower() in true_values else TRIGGER_MODE_MANUAL
 k8s_resource("mysql", labels=["Infrastructure"], port_forwards=[os.environ.get("MYSQL_PORT", "3306") + ":3306"])

@@ -1,0 +1,54 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+# Render with hack/ovh-render.py tls; do not apply the placeholders directly.
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: REPLACE_ISSUER_NAME
+  namespace: passage-edge
+spec:
+  acme:
+    email: REPLACE_ACME_EMAIL
+    server: REPLACE_ACME_SERVER
+    profile: shortlived
+    privateKeySecretRef:
+      name: REPLACE_ACCOUNT_SECRET
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: passage-edge
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: passage-ip
+  namespace: passage-edge
+spec:
+  secretName: passage-ip-tls
+  ipAddresses: [REPLACE_PUBLIC_IP]
+  duration: 160h
+  renewBefore: 48h
+  privateKey:
+    rotationPolicy: Always
+  issuerRef:
+    name: REPLACE_ISSUER_NAME
+    kind: Issuer
+---
+apiVersion: traefik.io/v1alpha1
+kind: TLSStore
+metadata:
+  name: default
+  namespace: passage-edge
+spec:
+  defaultCertificate:
+    secretName: passage-ip-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: TLSOption
+metadata:
+  name: default
+  namespace: passage-edge
+spec:
+  minVersion: VersionTLS12
+  # IP-literal clients may omit SNI; strict SNI checking must remain disabled.
+  sniStrict: false

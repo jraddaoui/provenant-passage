@@ -63,7 +63,7 @@
     "source": "hack/kube/components/seaweedfs/seaweedfs.yaml",
     "sha256": "11a99925b1311a29c68818372962398457a6222fee2a49e00634190287b29a89",
     "destination": "hack/kube/base/seaweedfs.yaml",
-    "changes": "Adapted to project naming, configuration or formatting; source hash retained."
+    "changes": "Adapted to project naming, configuration or formatting; source hash retained. Development credentials moved into the local overlay on 2026-11-26; shared base contains no Secret objects."
   },
   {
     "source_project": "tilt-extensions",
@@ -299,7 +299,7 @@
     "source": "dashboard/Dockerfile",
     "sha256": "754cd3a22072c7a1a56cd45059b7c375b6bbcd21501b013321288d05eadd6728",
     "destination": "ui/Dockerfile",
-    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md."
+    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md. OVH follow-up adds a GHCR source label and configurable Nginx body-size limit with unchanged local default."
   },
   {
     "source": "dashboard/hack/inject-vite-envs.sh",
@@ -311,7 +311,7 @@
     "source": "Dockerfile",
     "sha256": "6e4d1b4666d4db624afcc1f925f314c77f043be0be7ce0e9614b22b463798c62",
     "destination": "Dockerfile",
-    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md."
+    "changes": "Adapted reference implementation for Passage scope; see enduro-reuse.md. OVH follow-up adds the GHCR source-repository label."
   },
   {
     "source": "hack/build_dist.sh",

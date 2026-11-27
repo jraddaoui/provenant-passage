@@ -314,3 +314,52 @@ for 228 source files. Evidence: `docs/evidence/local/ci-importer/result.json`.
 No application code changed; backend/UI suites and browser acceptance were not
 repeated. The corrected workflow still needs a human commit/push and remote CI
 run; no remote pass is claimed.
+
+## OVH demo preparation, 2026-11-26
+
+The user requested a manual OVH deployment reusing Tilt's manifests, with public
+GHCR images and IP-based access to Passage, Temporal Web and SeaweedFS UI under
+the same HTTP Basic Auth. The [runbook](ovh-deployment.md) records the prepared
+overlays, ordered apply phases, credential handling and live acceptance steps.
+No images were pushed and no OVH resources were accessed or deployed by the agent.
+
+Reproduced locally: the local overlay renders the same Kubernetes objects as the
+previous Tilt base; 11 offline deployment/credential checks pass. Both pinned
+charts were downloaded and their SHA-256 digests verified. Helm 3.22.1 lint and
+template rendering pass; eight edge/TLS resources validate against their chart
+CRD schemas. Nginx validates the proxy template with the OVH `1g` body-size setting
+using image digest
+`sha256:7fc0fb4af7bf006aeb31aea88069976060f8f0a0a86b667126742cc17f4e31ae`.
+The local render test caught and fixed a Secret-to-ConfigMap volume patch that
+the installed Kustomize did not apply as intended. Python/YAML syntax, local
+documentation links and REUSE checks pass. Evidence:
+`docs/evidence/local/ovh-validation.json`.
+
+The user subsequently reported image publication and assigned a LoadBalancer IP;
+the public settings contain both image digests and the IP. ACME contact and live
+deployment remain human-operated inputs and checks.
+Pending live evidence: server-side validation, scheduling/storage/network-policy
+behavior, trusted IP certificate issuance and renewal, Basic Auth on all three
+UIs and `/api`, browser upload/events/download, and backup restoration. Backend
+and Vue suites were not rerun: application logic is unchanged. Remote CI has not
+run for this change.
+
+The subsequent tool check on 2026-11-26 found kubectl 1.37.3 (Kustomize 5.8.1)
+and Helm 4.3.2, replacing the old installed clients. The user reports cluster
+version `1.36.6-1`; no live server query was performed. Kubernetes/Helm policies
+support this client/server pairing, and cert-manager 1.21 lists Kubernetes 1.36
+as supported. All 11 offline checks and both chart lint/template runs passed
+again using the installed tools with `--kube-version 1.36.6`. Helm 4 reports a
+non-fatal SemVer warning for the upstream cert-manager chart's `v1.21.2` label.
+
+On 2026-11-27, the user reported a Redis Secret rendering failure during manual
+deployment. Reproduced with synthetic credentials: kubectl rejects combining
+`--from-env-file` and `--from-file` in one command. The helper now adds the Redis
+config bytes to the rendered Secret in memory, preserving existing credential
+files and the requirement to render all five Secrets before applying any.
+The regression test failed on the old command and passes after the fix. It runs
+real kubectl client-side rendering against a synthetic kubeconfig and intercepts
+the final apply; no cluster access or real credentials are involved. All 12
+offline deployment checks pass. Earlier checks validated credential generation
+but missed the actual kubectl rendering path; the new test covers that gap.
+The guide also removes shell-exit options from interactive setup commands.

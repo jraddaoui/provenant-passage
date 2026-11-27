@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+# Confirm the high-speed volume type is available in the selected OVH region.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: provenant-retain
+provisioner: cinder.csi.openstack.org
+parameters:
+  type: high-speed
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer

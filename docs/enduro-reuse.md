@@ -43,10 +43,15 @@ matching the sticky sidebar offset and viewport-height calculation.
 Home, upload, AIP details and reports use the shared content
 width; the details grid removes Bootstrap's negative outer row margins.
 
-Nginx/Vite proxy all API routes without request/response buffering or a body-size
-ceiling. Runtime injection retains the distribution-copy approach but only accepts
+Nginx/Vite proxy all API routes without request/response buffering. Local mode
+has no body-size ceiling; the OVH Nginx deployment sets `PROVENANT_MAX_UPLOAD_SIZE`
+to `1g` (2026-11-26). Runtime injection retains the distribution-copy approach but only accepts
 a same-origin API path. Builds disable VCS discovery/stamping. Local Tilt extension
 copies replace remote extension loading, preventing automatic repository cloning.
+The OVH follow-up moves copied SeaweedFS development credentials into the local
+overlay, keeps the shared base free of Secret objects, and points Tilt at that
+local overlay. Dockerfiles add GHCR source-repository labels. Upstream files
+and recorded source hashes remain unchanged.
 The new reset implements bucket deletion/recreation explicitly; the source reset
 only recreated application databases. Temporal history remains outside reset.
 

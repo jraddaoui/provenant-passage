@@ -8,5 +8,8 @@ ui/dist
 docs/evidence/local
 provenant.local.toml
 .tilt.env
+.secrets
+secrets
+**/*.kubeconfig
 coverage
 covreport

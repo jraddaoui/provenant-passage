@@ -1,0 +1,69 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: demo-auth
+  namespace: provenant
+spec:
+  basicAuth:
+    secret: demo-basic-auth
+    realm: Passage demo
+    removeHeader: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: passage
+  namespace: provenant
+  annotations:
+    kubernetes.io/ingress.class: passage-edge
+spec:
+  entryPoints: [websecure]
+  routes:
+    - match: PathPrefix(`/`)
+      kind: Rule
+      middlewares:
+        - name: demo-auth
+      services:
+        - name: provenant-ui
+          port: 80
+  tls: {}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: temporal-web
+  namespace: provenant
+  annotations:
+    kubernetes.io/ingress.class: passage-edge
+spec:
+  entryPoints: [temporal]
+  routes:
+    - match: PathPrefix(`/`)
+      kind: Rule
+      middlewares:
+        - name: demo-auth
+      services:
+        - name: temporal-web
+          port: 8080
+  tls: {}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: seaweedfs-ui
+  namespace: provenant
+  annotations:
+    kubernetes.io/ingress.class: passage-edge
+spec:
+  entryPoints: [seaweedfs]
+  routes:
+    - match: PathPrefix(`/`)
+      kind: Rule
+      middlewares:
+        - name: demo-auth
+      services:
+        - name: seaweedfs
+          port: 23646
+  tls: {}

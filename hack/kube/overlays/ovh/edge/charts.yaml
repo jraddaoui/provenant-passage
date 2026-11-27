@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+# Checked 2026-11-26. Download and verify before helm upgrade --install.
+traefik:
+  version: 42.4.1
+  appVersion: v3.7.19
+  url: https://traefik.github.io/charts/traefik/traefik-42.4.1.tgz
+  sha256: 80ea7246b74d5bcd1f86ac598feca6ba516a110dc0ad9e95dfda28d933b4acdb
+cert-manager:
+  version: v1.21.2
+  url: https://charts.jetstack.io/charts/cert-manager-v1.21.2.tgz
+  sha256: 73a56e1728edd6c99f1f31082618c3259d279a76b7ebd3d4bdc5475c2442d34a

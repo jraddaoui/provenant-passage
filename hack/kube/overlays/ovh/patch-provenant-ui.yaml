@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: provenant-ui
+spec:
+  template:
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: provenant-ui
+        resources:
+          requests:
+            cpu: 25m
+            memory: 32Mi
+          limits:
+            cpu: 500m
+            memory: 128Mi
+        env:
+        - name: PROVENANT_MAX_UPLOAD_SIZE
+          value: 1g

@@ -120,5 +120,7 @@ value. Trust inputs and verification policy remain external.
 Keep a concise result/limitation record in this project's `docs/` and bulky local
 evidence under ignored `docs/evidence/local/`. Missing required checks remain
 gaps. This is a local proof of concept without authentication or an upload-size
-ceiling; acceptance does not claim production readiness. Human review, DCO
+ceiling in the application itself. The separate [OVH demo](ovh-deployment.md)
+adds proxy authentication and an upload limit, with its live acceptance pending;
+acceptance does not claim production readiness. Human review, DCO
 sign-off, commits and publication remain human responsibilities.

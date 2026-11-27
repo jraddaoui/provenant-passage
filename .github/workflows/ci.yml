@@ -56,5 +56,10 @@ jobs:
         run: |
           bash hack/build_docker.sh provenant-server
           bash hack/build_docker.sh provenant-ui
-      - name: Render deployment
-        run: kubectl kustomize hack/kube/base > /tmp/provenant.yaml
+      - name: Check local and OVH deployment contracts
+        run: |
+          python3 -m venv "$RUNNER_TEMP/passage-deploy-checks"
+          "$RUNNER_TEMP/passage-deploy-checks/bin/pip" install PyYAML==6.0.3
+          command -v htpasswd || sudo apt-get install -y apache2-utils
+          kubectl kustomize hack/kube/overlays/local > /tmp/provenant.yaml
+          PYTHONDONTWRITEBYTECODE=1 "$RUNNER_TEMP/passage-deploy-checks/bin/python" hack/test_ovh.py

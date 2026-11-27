@@ -16,6 +16,11 @@ reproduced results and limits, distinct from the importer's earlier experiments.
 The related [Provenant projects](https://opencommit.eu/provenant) are maintained
 independently.
 
+For the manually operated OVH demo, follow the [deployment runbook](docs/ovh-deployment.md).
+It uses the shared manifests with an OVH overlay, public GHCR images and three
+HTTPS interfaces protected by the same Basic Auth credentials. Private values
+stay outside the checkout. Live OVH acceptance remains pending.
+
 ## Run locally
 
 Prerequisites: Go 1.27.4, Node 26, Python 3.12 or newer, Docker with BuildKit,
@@ -129,7 +134,9 @@ over them; `--config` selects an explicit file instead. `PROVENANT_` environment
 overrides apply last, for example `PROVENANT_DATABASE_DSN`,
 `PROVENANT_TEMPORAL_ADDRESS` and `PROVENANT_EVENT_REDISADDRESS`. Tilt mounts the
 selected TOML file. Checked-in Kubernetes credentials are disposable development
-placeholders. Override them locally, and keep private values out of source files.
+placeholders confined to `hack/kube/overlays/local`. Override them locally, and
+keep private values out of source files. The OVH overlay mounts public TOML from
+a ConfigMap and requires database/Redis/S3 credentials from private Secrets.
 
 ## Reset disposable application data
 
@@ -177,7 +184,9 @@ validation results and remote CI status.
 Conversion retains the importer's profile rules and loss accounting. It does
 not authenticate an archive's history or sign an attestation. Trust inputs and
 verification policy remain external. This is a local prototype with no
-authentication, production-readiness claim or configured upload-size ceiling.
+application-level authentication, production-readiness claim or application-level
+upload-size ceiling. The separate OVH demo adds Basic Auth and a 1 GiB public
+upload limit at its proxies; all admitted users share data and admin access.
 
 ## AI assistance
 

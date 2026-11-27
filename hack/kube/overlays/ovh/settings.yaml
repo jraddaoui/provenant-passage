@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2026 Artefactual Systems Limited
+# SPDX-License-Identifier: Apache-2.0
+# Non-secret deployment inputs. Fill these after provisioning/publishing and commit.
+publicIP: "148.113.231.109"
+acmeEmail: "jraddaoui@artefactual.com"
+# Prove issuance in staging first, then use https://acme-v02.api.letsencrypt.org/directory
+acmeServer: https://acme-v02.api.letsencrypt.org/directory
+serverImage: "ghcr.io/jraddaoui/provenant-passage-server@sha256:971f060792109d322ff5a39a4ad50eab399a4cb00ef3cda03412a26999f9669e"
+uiImage: "ghcr.io/jraddaoui/provenant-passage-ui@sha256:eabf20107f6841a22b120663c2631ec3e0065ca37c6faf0ad4abd75b83a8d734"
+# Images must be public GHCR references ending in @sha256:<64 hexadecimal digits>.
